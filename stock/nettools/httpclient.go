@@ -2,11 +2,12 @@ package nettools
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
-
+	"takistan/stock/db"
 	"time"
 )
 
@@ -15,10 +16,25 @@ type HttpClient struct {
 }
 
 type StockMeter struct {
-	CandlePeriod string //时间周期
-	DataCount    string //数据条数
+	GetType      string //查找类别
 	ProdCode     string //股票代码
+	CandlePeriod string //时间周期
+	StartDate    string //开始日期
+	EndDate      string //截止日期
 	AppCode      string //Auth
+}
+
+func (st *StockMeter) GetDateRange(code string) (string, string, error) {
+	dc := db.GetDB()
+	start, stop, err := dc.GetDateRange(code)
+	if err != nil {
+		return "error", "error", err
+	}
+	if stop == "notupdate" {
+		return "没有新数据", "没有新数据", errors.New("没有新数据")
+	}
+
+	return start, stop, nil
 }
 
 func CreateClient() *HttpClient {
@@ -52,9 +68,12 @@ func (client *HttpClient) HttpDoGet(url string, sm *StockMeter) ([]byte, error) 
 	}
 
 	q := req.URL.Query()
-	q.Add("candle_period", sm.CandlePeriod)
-	q.Add("data_count", sm.DataCount)
+	q.Add("get_type", sm.GetType)
 	q.Add("prod_code", sm.ProdCode)
+	q.Add("candle_period", sm.CandlePeriod)
+	q.Add("start_date", sm.StartDate)
+	q.Add("end_date", sm.EndDate)
+
 	req.URL.RawQuery = q.Encode()
 
 	req.Header.Add("Authorization", "APPCODE 27319841797a486cb7b634b2dfef7ecb")

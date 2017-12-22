@@ -1,7 +1,8 @@
 package meta
 
 func LoadMeta() []string {
-	str := []string{"000158.SZ",
+	str := []string{
+		"000158.SZ",
 		"000034.SZ",
 		"002237.SZ",
 		"000541.SZ",
