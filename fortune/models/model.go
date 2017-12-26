@@ -7,12 +7,12 @@ type Candle struct {
 	Infos map[string][]interface{} `json:"candle"`
 }
 type DayInfo struct {
-	Code            string
-	Date            string
-	OpenPx          float64
-	ClosePx         float64
-	HighPx          float64
-	LowPx           float64
-	BusinessAmount  float64
-	BusinessBalance float64
+	Code            string  `json:"code"`
+	Date            string  `json:"date"`
+	OpenPx          float64 `json:"openpx"`
+	ClosePx         float64 `json:"closepx"`
+	HighPx          float64 `json:"highpx"`
+	LowPx           float64 `json:"lowpx"`
+	BusinessAmount  float64 `json:"businessamount"`
+	BusinessBalance float64 `json:"businessbalance"`
 }

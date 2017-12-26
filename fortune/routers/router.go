@@ -11,5 +11,5 @@ func Init() {
 	//	beego.Router("/gettrend", &controllers.TrendController{})
 	beego.Router("/stockdatedata/:code/:datesize", &controllers.StockController{}, "get:StockDateData")
 	//示例：http://127.0.0.1/stockdatedata/000158.sz/60
-	//	beego.Router("/blog/:catId/:catName:/:catPublish:/:catPrice", &controllers.MainController{}, "get:Blog")
+	beego.Router("/draw", &controllers.DrawStockController{})
 }

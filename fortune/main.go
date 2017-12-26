@@ -31,6 +31,7 @@ func main() {
 	go reloadStockdata(codes)
 
 	routers.Init()
+
 	beego.Run()
 
 }
