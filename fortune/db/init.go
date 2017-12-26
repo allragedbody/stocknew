@@ -41,7 +41,6 @@ func GetDB() *DBClient {
 }
 
 func (dc *DBClient) GetDateRange(code string) (string, string, error) {
-
 	//查询数据
 	rows, err := dc.Conn.Query("select max(Date) from stockdayinfos where code=?", code)
 	if err != nil {
@@ -68,10 +67,10 @@ func (dc *DBClient) GetDateRange(code string) (string, string, error) {
 	return "notupdate", "notupdate", errors.New("notupdate")
 }
 
-func (dc *DBClient) InsertData(dinfos []*model.DayInfo) error {
+func (dc *DBClient) InsertData(dinfos []*models.DayInfo) error {
 	tx, err := dc.Conn.Begin()
 	if err != nil {
-		tx.Rollback()
+		//		tx.Rollback()
 		return err
 	}
 	//	Code            string

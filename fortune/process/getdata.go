@@ -16,8 +16,8 @@ func Init() {
 	c = nettools.CreateClient()
 }
 
-func GetHistoryData(codes []string) ([]*model.DayInfo, error) {
-	stockdata := make([]*model.DayInfo, 0)
+func GetHistoryData(codes []string) ([]*models.DayInfo, error) {
+	stockdata := make([]*models.DayInfo, 0)
 
 	url := "https://stock.api51.cn/kline"
 
@@ -59,7 +59,7 @@ func GetHistoryData(codes []string) ([]*model.DayInfo, error) {
 
 			oneday, _ := v.([]interface{})
 			for _, one := range oneday {
-				di := &model.DayInfo{}
+				di := &models.DayInfo{}
 				di.Code = k
 				//				fmt.Printf("%v %v\n", k, one)
 				o, _ := one.([]interface{})
@@ -91,7 +91,7 @@ func GetHistoryData(codes []string) ([]*model.DayInfo, error) {
 	return stockdata, nil
 }
 
-func RestoreData(data []*model.DayInfo) error {
+func RestoreData(data []*models.DayInfo) error {
 	dbconn := db.GetDB()
 	err := dbconn.InsertData(data)
 	if err != nil {

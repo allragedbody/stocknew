@@ -1,4 +1,4 @@
-package model
+package models
 
 type StockData struct {
 	Data *Candle `json:"data"`

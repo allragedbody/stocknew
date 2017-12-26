@@ -9,7 +9,8 @@ import (
 	//	"unsafe"
 	//	"strings"
 	"stocknew/fortune/db"
-	//	"time"
+	"stocknew/fortune/routers"
+	"time"
 
 	"github.com/astaxie/beego"
 	//	"github.com/robertkrimen/otto"
@@ -26,31 +27,50 @@ func main() {
 		return
 	}
 	process.Init()
-	data, _ := process.GetHistoryData(codes)
+	stockdata(codes)
+	go reloadStockdata(codes)
+
+	routers.Init()
+	beego.Run()
+
+}
+
+func stockdata(codes []string) error {
+	data, err := process.GetHistoryData(codes)
+	if err != nil {
+		fmt.Println("获取股票历史数据失败。", err)
+		return err
+	}
+
 	for _, line := range data {
 		fmt.Printf("Data will be insert into db  %v\n", line)
 	}
 	err = process.RestoreData(data)
 	if err != nil {
 		fmt.Println("插入股票数据失败。", err)
-		return
+		return err
 	}
 	fmt.Println("插入股票数据成功。")
+	return nil
+}
 
-	//	for {
-	//		time.Sleep(time.Second * 3600)
-	//		data, _ := process.GetHistoryData(codes)
-	//		for _, line := range data {
-	//			fmt.Printf("Data will be insert into db  %v\n", line)
-	//		}
-	//		err = process.RestoreData(data)
-	//		if err != nil {
-	//			fmt.Println("插入股票数据失败。", err)
-	//			return
-	//		}
-	//		fmt.Println("插入股票数据成功。")
-	//	}
+func reloadStockdata(codes []string) {
+	for {
+		time.Sleep(time.Second * 3600)
+		data, err := process.GetHistoryData(codes)
+		if err != nil {
+			fmt.Println("获取股票历史数据失败。", err)
+			continue
+		}
 
-	beego.Run()
-
+		for _, line := range data {
+			fmt.Printf("Data will be insert into db  %v\n", line)
+		}
+		err = process.RestoreData(data)
+		if err != nil {
+			fmt.Println("插入股票数据失败。", err)
+			continue
+		}
+		fmt.Println("插入股票数据成功。")
+	}
 }

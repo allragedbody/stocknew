@@ -87,6 +87,10 @@ func (client *HttpClient) HttpDoGet(url string, sm *StockMeter) ([]byte, error) 
 	//	req.Header.Set("Cookie", "name=anny")
 
 	resp, err := client.httpClient.Do(req)
+	if err != nil {
+		fmt.Println("请求失败，错误：%v", err)
+		return nil, err
+	}
 
 	defer resp.Body.Close()
 
