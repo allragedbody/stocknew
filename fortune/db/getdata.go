@@ -1,22 +1,12 @@
 package db
 
 import (
-	"fmt"
+	//	"fmt"
 	"stocknew/fortune/models"
 )
 
 func (dc *DBClient) GetStockDateData(code string, datesize int) ([]*models.DayInfo, error) {
 	datas := make([]*models.DayInfo, 0)
-	//	type DayInfo struct {
-	//	Code            string
-	//	Date            string
-	//	OpenPx          float64
-	//	ClosePx         float64
-	//	HighPx          float64
-	//	LowPx           float64
-	//	BusinessAmount  float64
-	//	BusinessBalance float64
-	//}
 
 	//查询数据
 	rows, err := dc.Conn.Query("select `code`,`date`,`OpenPx`,`ClosePx`,`HighPx`,`LowPx`,`BusinessAmount`,`BusinessBalance` from stockdayinfos where Code=? order by id desc limit ?;", code, datesize)
@@ -39,6 +29,6 @@ func (dc *DBClient) GetStockDateData(code string, datesize int) ([]*models.DayIn
 		}
 		datas = append(datas, &models.DayInfo{code, date, oppx, clpx, hipx, lopx, ba, bb})
 	}
-	fmt.Printf("1111111111111%v", datas)
+
 	return datas, nil
 }

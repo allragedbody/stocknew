@@ -31,7 +31,7 @@ func main() {
 	go reloadStockdata(codes)
 
 	routers.Init()
-
+	beego.SetStaticPath("/views", "views")
 	beego.Run()
 
 }
