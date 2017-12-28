@@ -89,15 +89,34 @@ option = {
             name:'最高线',
             type:'line',
             data:data2,
-            markPoint : {
-                data : [
-                    {type : 'max', name: '最大值'},
-                    {type : 'min', name: '最小值'}
-                ]
-            },
-            markLine : {
-                data : [
-                    {type : 'average', name: '平均值'}
+			 markLine: {
+                symbol: ['none', 'none'],
+                lineStyle: {
+                    emphasis :{
+                         color: 'rgb(80,33,85)'
+                    }
+                },
+                data: [
+                    [{
+                        name: 'aaa',
+                        coord: ['20171114', 12.51],
+                        value:  12.51,
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(33,60,85)'
+                            }
+                        },
+                    }, {
+                        name: 'bbb',
+                        coord: ['20171207', 15.44],
+                        value: 15.44,
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(33,60,85)'
+                            }
+                        }
+
+                    }, ]
                 ]
             }
         },
@@ -105,18 +124,39 @@ option = {
             name:'最低线',
             type:'line',
             data:data3,
-            markPoint : {
-                data : [
-                    {name : '周最低', value : -2, xAxis: 1, yAxis: -1.5}
-                ]
-            },
-            markLine : {
-                data : [
-                    {type : 'average', name : '平均值'}
+			 markLine: {
+                symbol: ['none', 'none'],
+                lineStyle: {
+                    emphasis :{
+                         color: 'rgb(80,33,85)'
+                    }
+                },
+                data: [
+                    [{
+                        name: 'aaa',
+                        coord: ['20171127', 10.28],
+                        value:   10.28,
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(33,60,85)'
+                            }
+                        },
+                    }, {
+                        name: 'bbb',
+                        coord: ['20171220', 15.25],
+                        value: 15.25,
+                        itemStyle: {
+                            normal: {
+                                color: 'rgb(33,60,85)'
+                            }
+                        }
+
+                    }, ]
                 ]
             }
         }
-    ]
+    ],
+	           
 };
                    
 if (option && typeof option === "object") {

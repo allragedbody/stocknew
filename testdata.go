@@ -181,8 +181,10 @@ func main() {
 	}
 	sort.Strings(keys1)
 
-	for _, v := range keys1 {
-		fmt.Printf("%v\t%v\t%v\n", v, result[v].value, result[v].size)
+	for i, v := range keys1 {
+		if i <= 5 {
+			fmt.Printf("%v\t%v\t%v\n", v, result[v].value, result[v].size)
+		}
 	}
 }
 
