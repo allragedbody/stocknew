@@ -11,7 +11,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const InitDate = "20130101"
+const InitDate = "20000101"
 
 var (
 	dbhostsip  = "127.0.0.1:3306" //IP地址
@@ -46,7 +46,16 @@ func (dc *DBClient) GetDateRange(code string) (string, string, error) {
 	if err != nil {
 		return "notupdate", "notupdate", err
 	}
+	var day string
 	today := time.Now().Format("20060102")
+	yesterday := time.Now().AddDate(0, 0, -1).Format("20060102")
+
+	nowh := time.Now().Hour()
+	if nowh > 15 {
+		day = today
+	} else {
+		day = yesterday
+	}
 	for rows.Next() {
 		var c sql.NullString
 		err := rows.Scan(&c)
@@ -54,14 +63,14 @@ func (dc *DBClient) GetDateRange(code string) (string, string, error) {
 			return "error", "error", err
 		}
 		if !c.Valid {
-			return InitDate, today, nil
+			return InitDate, day, nil
 		}
 
-		if c.String == today {
+		if c.String == day {
 			return "notupdate", "notupdate", errors.New("notupdate")
 		} else {
 			t, _ := time.Parse("20060102", c.String)
-			return t.Add(time.Duration(86400 * time.Second)).Format("20060102"), today, nil
+			return t.Add(time.Duration(86400 * time.Second)).Format("20060102"), day, nil
 		}
 	}
 	return "notupdate", "notupdate", errors.New("notupdate")

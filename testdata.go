@@ -141,7 +141,7 @@ func main() {
 	datas[57] = data{"20171221", 61, 0}
 	datas[58] = data{"20171222", 61.78, 0}
 	datas[59] = data{"20171225", 61.5, 0}
-	for i1 := 0; i1 < 1000000; i1++ {
+	for i1 := 0; i1 < 100000; i1++ {
 		td := make(map[string]float64, 0)
 
 		nums := generateRandomNumber(1, 60, 15)
@@ -172,6 +172,29 @@ func main() {
 		}
 		//}
 	}
+	for index, _ := range datas {
+		if index > 0 && index < 59 {
+			if datas[index].value > datas[index-1].value && datas[index].value > datas[index+1].value {
+				t := result[datas[index].date].size
+				t = t + 10000
+				d := data{datas[index].date, result[datas[index].date].value, t}
+				//	fmt.Println(d, keys[index])
+				result[datas[index].date] = d
+			}
+		}
+	}
+
+	for index, _ := range datas {
+		if index > 1 && index < 58 {
+			if datas[index].value+datas[index-1].value+datas[index+1].value > datas[index-2].value+datas[index-1].value+datas[index].value && datas[index].value+datas[index-1].value+datas[index+1].value > datas[index].value+datas[index+1].value+datas[index+2].value {
+				t := result[datas[index].date].size
+				t = t + 30000
+				d := data{datas[index].date, result[datas[index].date].value, t}
+				//	fmt.Println(d, keys[index])
+				result[datas[index].date] = d
+			}
+		}
+	}
 
 	var keys1 []string
 	keys1 = make([]string, 0)
@@ -182,8 +205,8 @@ func main() {
 	sort.Strings(keys1)
 
 	for i, v := range keys1 {
-		if i <= 5 {
-			fmt.Printf("%v\t%v\t%v\n", v, result[v].value, result[v].size)
+		if i <= 100 {
+			fmt.Printf("%v|%v|%v\n", v, result[v].value, result[v].size)
 		}
 	}
 }
