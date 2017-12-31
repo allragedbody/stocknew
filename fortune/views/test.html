@@ -28,6 +28,9 @@ var datesize = {{.datesize}}
 var data1 = new Array();
 var data2 = new Array();
 var data3 = new Array();
+var maxp = []
+var minp = []
+
 
 	$.ajax({
       url: "http://127.0.0.1/stockdatedata/"+code+"/"+datesize,
@@ -35,18 +38,27 @@ var data3 = new Array();
       type: "GET",
       dataType: "JSON",
       success:function(result){
-          $.each(result, function(index, data){
+          $.each(result.historydatas, function(index, data){
               data1.push(data.date);
               data2.push(data.highpx);
 			  data3.push(data.lowpx);
           });
+		  $.each(result.maxpoints, function(index, data){
+              maxp.push(data);
+          });
+		  $.each(result.minpoints, function(index, data){
+              minp.push(data);
+          });		
       }
   	});
   
 console.log(data1);
 console.log(data2);	
 console.log(data3);
-
+console.log(maxp);
+console.log(minp);
+console.log(minp[0]);
+console.log(minp[0].px);
 option = {
     title : {
         text: '走势图',
@@ -98,18 +110,18 @@ option = {
                 },
                 data: [
                     [{
-                        name: 'aaa',
-                        coord: ['20171114', 12.51],
-                        value:  12.51,
+                        name: 'maxp0',
+                        coord: [maxp[0].date,maxp[0].px],
+                        value:  maxp[0].px,
                         itemStyle: {
                             normal: {
                                 color: 'rgb(33,60,85)'
                             }
                         },
                     }, {
-                        name: 'bbb',
-                        coord: ['20171207', 15.44],
-                        value: 15.44,
+                        name: 'maxp1',
+                        coord: [maxp[1].date,maxp[1].px],
+                        value: maxp[1].px,
                         itemStyle: {
                             normal: {
                                 color: 'rgb(33,60,85)'
@@ -133,18 +145,18 @@ option = {
                 },
                 data: [
                     [{
-                        name: 'aaa',
-                        coord: ['20171127', 10.28],
-                        value:   10.28,
+                        name: 'minp0',
+                        coord: [minp[0].date,minp[0].px],
+                        value:   minp[0].px,
                         itemStyle: {
                             normal: {
                                 color: 'rgb(33,60,85)'
                             }
                         },
                     }, {
-                        name: 'bbb',
-                        coord: ['20171220', 15.25],
-                        value: 15.25,
+                        name: 'minp1',
+                        coord: [minp[1].date,minp[1].px],
+                        value: minp[1].px,
                         itemStyle: {
                             normal: {
                                 color: 'rgb(33,60,85)'

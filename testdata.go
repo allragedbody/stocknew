@@ -17,6 +17,9 @@ var datas map[int]data
 var result map[string]data
 
 func main() {
+	dataSize := 60
+	onePointWeight := 10000
+	threePointWeight := 30000
 	result = make(map[string]data, 0)
 	datas = make(map[int]data, 0)
 
@@ -173,10 +176,10 @@ func main() {
 		//}
 	}
 	for index, _ := range datas {
-		if index > 0 && index < 59 {
+		if index > 0 && index < dataSize-1 {
 			if datas[index].value > datas[index-1].value && datas[index].value > datas[index+1].value {
 				t := result[datas[index].date].size
-				t = t + 10000
+				t = t + onePointWeight
 				d := data{datas[index].date, result[datas[index].date].value, t}
 				//	fmt.Println(d, keys[index])
 				result[datas[index].date] = d
@@ -185,10 +188,10 @@ func main() {
 	}
 
 	for index, _ := range datas {
-		if index > 1 && index < 58 {
+		if index > 1 && index < dataSize-2 {
 			if datas[index].value+datas[index-1].value+datas[index+1].value > datas[index-2].value+datas[index-1].value+datas[index].value && datas[index].value+datas[index-1].value+datas[index+1].value > datas[index].value+datas[index+1].value+datas[index+2].value {
 				t := result[datas[index].date].size
-				t = t + 30000
+				t = t + threePointWeight
 				d := data{datas[index].date, result[datas[index].date].value, t}
 				//	fmt.Println(d, keys[index])
 				result[datas[index].date] = d
@@ -196,19 +199,15 @@ func main() {
 		}
 	}
 
-	var keys1 []string
-	keys1 = make([]string, 0)
-
+	sizeM := make(map[int]data, 0)
+	sizeInt := make([]int, 0)
 	for k, _ := range result {
-		keys1 = append(keys1, k)
+		sizeM[result[k].size] = result[k]
+		sizeInt = append(sizeInt, result[k].size)
 	}
-	sort.Strings(keys1)
+	sort.Ints(sizeInt)
 
-	for i, v := range keys1 {
-		if i <= 100 {
-			fmt.Printf("%v|%v|%v\n", v, result[v].value, result[v].size)
-		}
-	}
+	fmt.Printf("%v%v\n", sizeM[sizeInt[len(sizeInt)-1]], sizeM[sizeInt[len(sizeInt)-2]])
 }
 
 //生成count个[start,end)结束的不重复的随机数
