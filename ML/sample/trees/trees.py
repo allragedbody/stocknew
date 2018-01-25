@@ -89,20 +89,28 @@ def createTrees(dataSet,labels):
     #如果类型列表中的所有项都和第一项的值相同，停止划分
     if classList.count(classList[0])==len(classList):
         return classList[0]
+    #如果数据集合最终只剩下类型一项，则根据多数进行类型确定
     if len(dataSet[0])==1:
         return majorityCnt(classList)
+    #如果以上都不符合，就选取最有效的划分特征
     bestFeat=chooseBestFeatureToSpit(dataSet)
+    #拿到该特征的特征值
     bestFeatLabel=labels[bestFeat]
+    #根据该特征值创建树节点
     myTree={bestFeatLabel:{}}
+    #删掉该特征
     del(labels[bestFeat])
+    #得到最佳特征的集合
     featValues=[example[bestFeat] for example in dataSet]
     uniqueVals=set(featValues)
+    #根据最佳特征进行下一步创建子树的过程
     for value in uniqueVals:
         subLabels=labels[:]
+        #创建子树
         myTree[bestFeatLabel][value]=createTrees(splitDataSet(dataSet,bestFeat,value),subLabels)
     return myTree
 
     
-m,l=trees.createDataSet()
-mt=trees.createTrees(m,l)
-print(mt)
+#m,l=trees.createDataSet()
+#mt=trees.createTrees(m,l)
+#print(mt)
