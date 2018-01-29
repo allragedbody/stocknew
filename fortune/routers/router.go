@@ -1,7 +1,7 @@
 package routers
 
 import (
-	"fortune/controllers"
+	"stocknew/fortune/controllers"
 
 	"github.com/astaxie/beego"
 )

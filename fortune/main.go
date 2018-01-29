@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	_ "fortune/routers"
 	"stocknew/fortune/meta"
+	_ "stocknew/fortune/routers"
 	//	"stocknew/fortune/nettools"
 	"stocknew/fortune/process"
 	//	"unsafe"
