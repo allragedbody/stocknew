@@ -4,7 +4,9 @@
        <meta charset="utf-8">
    </head>
    <body style="height: 100%; margin: 0">
-       <div id="container" style="height: 100%"></div>
+       <div id="container" style="height: 100%">
+	<div id="main" onmousedown = "mousedown()"></div>
+	</div>
        <script type="text/javascript" src="/views/static/echarts/echarts.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
@@ -28,8 +30,6 @@ var datesize = {{.datesize}}
 var data1 = new Array();
 var data2 = new Array();
 var data3 = new Array();
-var maxp = []
-var minp = []
 
 
 	$.ajax({
@@ -42,23 +42,11 @@ var minp = []
               data1.push(data.date);
               data2.push(data.highpx);
 			  data3.push(data.lowpx);
-          });
-		  $.each(result.maxpoints, function(index, data){
-              maxp.push(data);
-          });
-		  $.each(result.minpoints, function(index, data){
-              minp.push(data);
-          });		
+          });	
       }
   	});
   
-console.log(data1);
-console.log(data2);	
-console.log(data3);
-console.log(maxp);
-console.log(minp);
-console.log(minp[0]);
-console.log(minp[0].px);
+
 option = {
     title : {
         text: '走势图',
@@ -109,28 +97,6 @@ option = {
                          color: 'rgb(80,33,85)'
                     }
                 },
-                data: [
-                    [{
-                        name: 'maxp0',
-                        coord: [maxp[0].date,maxp[0].px],
-                        value:  maxp[0].px,
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(33,60,85)'
-                            }
-                        },
-                    }, {
-                        name: 'maxp1',
-                        coord: [maxp[1].date,maxp[1].px],
-                        value: maxp[1].px,
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(33,60,85)'
-                            }
-                        }
-
-                    }, ]
-                ]
             }
         },
         {
@@ -144,28 +110,6 @@ option = {
                          color: 'rgb(80,33,85)'
                     }
                 },
-                data: [
-                    [{
-                        name: 'minp0',
-                        coord: [minp[0].date,minp[0].px],
-                        value:   minp[0].px,
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(33,60,85)'
-                            }
-                        },
-                    }, {
-                        name: 'minp1',
-                        coord: [minp[1].date,minp[1].px],
-                        value: minp[1].px,
-                        itemStyle: {
-                            normal: {
-                                color: 'rgb(33,60,85)'
-                            }
-                        }
-
-                    }, ]
-                ]
             }
         }
     ],

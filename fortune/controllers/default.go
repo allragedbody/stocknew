@@ -75,8 +75,8 @@ func (this *StockController) StockDateData() {
 	}
 
 	rsp.HistoryDatas = dataReverse
-	rsp.MaxPoints = rsp.GetMaxPoints(dataReverse)
-	rsp.MinPoints = rsp.GetMinPoints(dataReverse)
+	//	rsp.MaxPoints = rsp.GetMaxPoints(dataReverse)
+	//	rsp.MinPoints = rsp.GetMinPoints(dataReverse)
 
 	this.Data["json"] = rsp
 
@@ -90,11 +90,11 @@ type DrawStockController struct {
 }
 
 func (c *DrawStockController) Get() {
-	code := c.GetString(":code")
-	datesize, _ := c.GetInt(":datesize")
+	code := c.GetString("code")
+	datesize, _ := c.GetInt("datesize")
 
 	c.Data["code"] = code
 	c.Data["datesize"] = datesize
-	c.TplName = "test.html"
+	c.TplName = "stockdraw.html"
 	c.Render()
 }
