@@ -5,7 +5,6 @@
    </head>
    <body style="height: 100%; margin: 0">
        <div id="container" style="height: 100%">
-	<div id="main" onmousedown = "mousedown()"></div>
 	</div>
        <script type="text/javascript" src="/views/static/echarts/echarts.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
@@ -32,21 +31,6 @@ var data2 = new Array();
 var data3 = new Array();
 
 
-	$.ajax({
-      url: "http://127.0.0.1/stockdatedata/"+code+"/"+datesize,
-      async: false,
-      type: "GET",
-      dataType: "JSON",
-      success:function(result){
-          $.each(result.historydatas, function(index, data){
-              data1.push(data.date);
-              data2.push(data.highpx);
-			  data3.push(data.lowpx);
-          });	
-      }
-  	});
-  
-
 option = {
     title : {
         text: '走势图',
@@ -69,6 +53,12 @@ option = {
         }
     },
     calculable : true,
+	dataZoom:{
+		show:true,
+		realtime:true,
+		start:0,
+		end:100
+	},
     xAxis : [
         {
             type : 'category',
@@ -112,13 +102,40 @@ option = {
                 },
             }
         }
-    ],
-	           
+    ],        
 };
-                   
+
+
+
+	$.ajax({
+      url: "http://127.0.0.1/stockdatedata/"+code+"/"+datesize,
+      async: false,
+      type: "GET",
+      dataType: "JSON",
+      success:function(result){
+          $.each(result.historydatas, function(index, data){
+              data1.push(data.date);
+              data2.push(data.highpx);
+			  data3.push(data.lowpx);
+          });	
+      }
+  	});
+          
+var ecConfig = echarts.config; 
+function eConsole(param) {
+    var mes = '【' + param.type + '】';
+    if (typeof param.seriesIndex != 'undefined') {
+	console.log(param.dataIndex);
+	console.log(param.name);
+	console.log(param.data);
+    }
+}
+myChart.on('click',eConsole);
+  
 if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
+
 
 </script>
    </body>
