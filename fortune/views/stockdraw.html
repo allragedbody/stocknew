@@ -4,14 +4,21 @@
        <meta charset="utf-8">
    </head>
    <body style="height: 100%; margin: 0">
-       <div id="container" style="height: 100%">
-	</div>
+  <div id="firstpoint">  请点击曲线确定点1：</div>
+  <div id="secondpoint">  请点击曲线确定点2：</div>
+  <div id="datapush">
+	<form id="stock" action="/datapush/">
+	<input type="hidden"  id="myItems" >
+	<input type="hidden"  id="pushPoint" >
+      <input type="submit" value="上报数据" />
+	</form>
+  </div>
+    <div id="container" style="height: 100%"></div>
        <script type="text/javascript" src="/views/static/echarts/echarts.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>	
 	   <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.js"></script>
-
 
 <script type="text/javascript">
 var dom = document.getElementById("container");
@@ -30,11 +37,28 @@ var data1 = new Array();
 var data2 = new Array();
 var data3 = new Array();
 
+function Item(date, highpx, lowpx) {
+    this.date = date;
+    this.highpx = highpx;
+    this.lowpx = lowpx;
+}
+
+var myItems = [
+];
+var data1 = [
+];
+var data2 = [
+];
+var data3 = [
+];
+var ecConfig = echarts.config; 
+var start=0
+var pushPoint=[]
 
 option = {
     title : {
-        text: '走势图',
-        subtext: '纯属虚构'
+        text: '股票日线',
+        subtext: pushPoint
     },
     tooltip : {
         trigger: 'axis'
@@ -114,20 +138,41 @@ option = {
       dataType: "JSON",
       success:function(result){
           $.each(result.historydatas, function(index, data){
+			myItems.push(new Item(data.date, data.highpx, data.lowpx));
               data1.push(data.date);
               data2.push(data.highpx);
 			  data3.push(data.lowpx);
           });	
       }
   	});
-          
-var ecConfig = echarts.config; 
+
+
+
+function recordFirstPoint(index){
+	pushPoint=[]
+	pushPoint.push(index)
+}
+function recordSecondPoint(index){
+	pushPoint.push(index)
+}
 function eConsole(param) {
     var mes = '【' + param.type + '】';
     if (typeof param.seriesIndex != 'undefined') {
+		if (start==0){
+			recordFirstPoint(param.dataIndex)
+			start=1
+	document.getElementById("firstpoint").innerHTML = "  请点击曲线确定点1："+pushPoint;
+<!--			window.location.href="http://127.0.0.1/draw/?code=000158.SZ&date=2018-01-01&datesize=120";  -->
+		}else{
+		    recordSecondPoint(param.dataIndex)
+			start=0
+	document.getElementById("secondpoint").innerHTML = "  请点击曲线确定点2："+pushPoint[1];
+<!--			window.location.href="http://127.0.0.1/draw/?code=000158.SZ&date=2018-01-01&datesize=120";  -->
+		}
 	console.log(param.dataIndex);
 	console.log(param.name);
 	console.log(param.data);
+	console.log(pushPoint);
     }
 }
 myChart.on('click',eConsole);
@@ -136,7 +181,8 @@ if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
 
-
+document.getElementById("myItems") = myItems;  
+document.getElementById("pushPoint") = pushPoint;  
 </script>
    </body>
 </html>

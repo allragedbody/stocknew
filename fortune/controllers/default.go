@@ -98,3 +98,11 @@ func (c *DrawStockController) Get() {
 	c.TplName = "stockdraw.html"
 	c.Render()
 }
+
+type PushMLDataController struct {
+	beego.Controller
+}
+
+func (c *PushMLDataController) Post() {
+	c.Render()
+}
