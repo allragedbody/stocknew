@@ -6,19 +6,25 @@
    <body style="height: 100%; margin: 0">
   <div id="firstpoint">  请点击曲线确定点1：</div>
   <div id="secondpoint">  请点击曲线确定点2：</div>
-  <div id="datapush">
-	<form id="stock" action="/datapush/">
-	<input type="hidden"  id="myItems" >
-	<input type="hidden"  id="pushPoint" >
-      <input type="submit" value="上报数据" />
-	</form>
+  <div class="datapush">
+	<button type="button" class="datapushbtn" id="datapush">手工录入</button>
   </div>
+  <div class="modal_fade" id="resalt_modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+    <div class="modal-body">
+       <div id="result" class="alert alert-warning" style="margin-too:15px">录入失败</div>
+    </div>
+  </div>
+
     <div id="container" style="height: 100%"></div>
-       <script type="text/javascript" src="/views/static/echarts/echarts.js"></script>
+	   <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.js"></script>
+       <script type="text/javascript" src="/views/static/js/jquery.min.js"></script>
+       <script type="text/javascript" src="/views/static/js/bootstrap-multiselect.js"></script>
+       <script type="text/javascript" src="/views/static/js/bootstrap.min.js"></script>
+	   <script type="text/javascript" src="/views/static/echarts/echarts.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
        <script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>	
-	   <script type="text/javascript" src="http://code.jquery.com/jquery-3.2.1.js"></script>
+
 
 <script type="text/javascript">
 var dom = document.getElementById("container");
@@ -146,8 +152,6 @@ option = {
       }
   	});
 
-
-
 function recordFirstPoint(index){
 	pushPoint=[]
 	pushPoint.push(index)
@@ -162,12 +166,10 @@ function eConsole(param) {
 			recordFirstPoint(param.dataIndex)
 			start=1
 	document.getElementById("firstpoint").innerHTML = "  请点击曲线确定点1："+pushPoint;
-<!--			window.location.href="http://127.0.0.1/draw/?code=000158.SZ&date=2018-01-01&datesize=120";  -->
 		}else{
 		    recordSecondPoint(param.dataIndex)
 			start=0
 	document.getElementById("secondpoint").innerHTML = "  请点击曲线确定点2："+pushPoint[1];
-<!--			window.location.href="http://127.0.0.1/draw/?code=000158.SZ&date=2018-01-01&datesize=120";  -->
 		}
 	console.log(param.dataIndex);
 	console.log(param.name);
@@ -181,8 +183,34 @@ if (option && typeof option === "object") {
     myChart.setOption(option, true);
 }
 
-document.getElementById("myItems") = myItems;  
-document.getElementById("pushPoint") = pushPoint;  
+$("#datapush").click(function(){
+	$.ajax({
+			url : 'draw/databush',
+			type : 'POST',
+			data : {
+				myItems : myItems,
+				pushPoint: pushPoint
+			},
+			success : function(r) {
+				if(r.status == 200){
+					$("#result").html("已加入检测队列,任务id:"+r.statusText);
+					$("#result").removeClass("alert-warning").addClass("alert-success");
+				}else{
+					$("#result").html(r.statusText);
+					$("#result").addClass("alert-warning").removeClass("alert-success");
+				}
+				$("#result_modal").modal('show');
+			},
+			error : function(e) {
+				$("#result").html("失败");
+				$("#result_modal").modal('show');
+			}
+			})
+		console.log(myItems);
+		console.log(pushPoint);
+})
+
+
 </script>
    </body>
 </html>
