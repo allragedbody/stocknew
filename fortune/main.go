@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"stocknew/fortune/meta"
+
 	_ "stocknew/fortune/routers"
+
+	"github.com/astaxie/beego/logs"
 	//	"stocknew/fortune/nettools"
 	"stocknew/fortune/process"
 	//	"unsafe"
@@ -13,15 +16,33 @@ import (
 	"time"
 
 	"github.com/astaxie/beego"
+
 	//	"github.com/robertkrimen/otto"
 )
 
+func initLog() error {
+	jsonConfig := `{
+        "filename" : "test.log", 
+		"level":7
+    }`
+
+	logs.SetLogger("file", jsonConfig)
+	logs.SetLogFuncCall(true)
+	return nil
+}
+
 func main() {
-	fmt.Println("这是一款股票分析模拟交易软件。作者 邓云飞。")
-	fmt.Println("加载股票代码数据。")
+	//	err := initLog()
+	//	if err != nil {
+	//		fmt.Println("init log error:%v", err)
+	//		return
+	//	}
+
+	logs.Info("这是一款股票分析模拟交易软件。作者 邓云飞。")
+	logs.Info("加载股票代码数据。")
 	codes := meta.LoadMeta()
-	fmt.Println("加载需要获取数据的股票。")
-	fmt.Println("对股票进行分析。")
+	logs.Info("加载需要获取数据的股票。")
+	logs.Info("对股票进行分析。")
 	err := db.Init()
 	if err != nil {
 		return

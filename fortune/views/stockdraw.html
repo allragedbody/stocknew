@@ -11,7 +11,7 @@
   </div>
   <div class="modal_fade" id="resalt_modal" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
     <div class="modal-body">
-       <div id="result" class="alert alert-warning" style="margin-too:15px">录入失败</div>
+       <div id="result" class="alert-warning" style="margin-too:15px">录入失败</div>
     </div>
   </div>
 
@@ -185,29 +185,31 @@ if (option && typeof option === "object") {
 
 $("#datapush").click(function(){
 	$.ajax({
-			url : 'draw/databush',
+			url : 'databush',
 			type : 'POST',
 			data : {
-				myItems : myItems,
-				pushPoint: pushPoint
+				"myItems" : myItems,
+				"pushPoint": pushPoint
 			},
 			success : function(r) {
 				if(r.status == 200){
 					$("#result").html("已加入检测队列,任务id:"+r.statusText);
 					$("#result").removeClass("alert-warning").addClass("alert-success");
+					alert("录入数据成功"); 
 				}else{
 					$("#result").html(r.statusText);
 					$("#result").addClass("alert-warning").removeClass("alert-success");
+					alert("返回状态码非200"); 	
+
 				}
 				$("#result_modal").modal('show');
 			},
 			error : function(e) {
 				$("#result").html("失败");
 				$("#result_modal").modal('show');
+				alert("录入数据失败"); 
 			}
 			})
-		console.log(myItems);
-		console.log(pushPoint);
 })
 
 

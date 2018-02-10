@@ -4,11 +4,16 @@ import (
 	"fmt"
 	"strconv"
 	//	"encoding/json"
+	//	"bufio"
+	"encoding/json"
+	"io/ioutil"
 	"stocknew/fortune/db"
-
 	"stocknew/fortune/models"
+	"strings"
 
 	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+	//	"github.com/gorilla/schema"
 )
 
 type MainController struct {
@@ -96,6 +101,7 @@ func (c *DrawStockController) Get() {
 	c.Data["code"] = code
 	c.Data["datesize"] = datesize
 	c.TplName = "stockdraw.html"
+	logs.Info("画出曲线图，股票代码：%v 天数：%v", code, datesize)
 	c.Render()
 }
 
@@ -103,6 +109,46 @@ type PushMLDataController struct {
 	beego.Controller
 }
 
-func (c *PushMLDataController) Post() {
-	c.Render()
+type Item struct {
+	Date   string  `json:"date"`
+	Highpx float64 `json:"highpx"` //对应表单中的name值,字段名首字母也必须大写，否则无法解析该参数的值
+	Lowpx  float64 `json:"lowpx"`
+}
+
+type Mlobject struct {
+	MyItems   []Item `json:"myItems"`
+	PushPoint []int  `json:"pushPoint"` //对应表单中的name值,字段名首字母也必须大写，否则无法解析该参数的值
+}
+
+func (this *PushMLDataController) PushDataToDB() {
+	ob := &Mlobject{}
+	//	err := this.ParseForm(ob)
+	//	if err != nil {
+	//		fmt.Println("解析表单数据失败!")
+	//	}
+	//	var decoder = schema.NewDecoder()
+	//	err = decoder.Decode(&ob, this.Post())
+	//	if err != nil {
+	//		fmt.Println("解码表单数据失败!")
+	//		fmt.Println(err)
+	//	}
+	//	MyItems := strings.Split(this.FormValue("MyItems"), ",")
+	//	fmt.Println("MyItems---", ob.MyItems)
+	//	for k, v := range ob.MyItems {
+	//		fmt.Println(k, v)
+	//	}
+
+	//	logs.Info("数据 %v", string(this.Ctx.Input.RequestBody))
+
+	s := strings.NewReader(string(this.Ctx.Input.RequestBody))
+	result, err := ioutil.ReadAll(s)
+	if err != nil {
+		logs.Info("解析数据失败，原因为 %v", err)
+	}
+
+	err = json.Unmarshal(result, &ob)
+	if err != nil {
+		logs.Info("解析json数据失败，原因为 %v", err)
+	}
+	logs.Info(string(result))
 }
