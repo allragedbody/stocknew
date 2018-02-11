@@ -186,14 +186,13 @@ if (option && typeof option === "object") {
 $("#datapush").click(function(){
 	$.ajax({
 			url : 'databush',
-			type : 'POST',
-			data : {
-				"myItems" : myItems,
-				"pushPoint": pushPoint
-			},
+			type : 'post',
+            data: JSON.stringify({"myItems":myItems,"pushPoint":pushPoint}),
+			dataType:'JSON',
+			processData:false,
+			contentType:"application/json",
 			success : function(r) {
 				if(r.status == 200){
-					$("#result").html("已加入检测队列,任务id:"+r.statusText);
 					$("#result").removeClass("alert-warning").addClass("alert-success");
 					alert("录入数据成功"); 
 				}else{

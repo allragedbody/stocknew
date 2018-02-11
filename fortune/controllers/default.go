@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
-	//	"encoding/json"
 	//	"bufio"
-	"encoding/json"
+	//	"encoding/json"
+	//	"encoding/base64"
 	"io/ioutil"
 	"stocknew/fortune/db"
 	"stocknew/fortune/models"
@@ -124,7 +125,7 @@ func (this *PushMLDataController) PushDataToDB() {
 	ob := &Mlobject{}
 	//	err := this.ParseForm(ob)
 	//	if err != nil {
-	//		fmt.Println("解析表单数据失败!")
+	//		fmt.Printf("解析表单数据失败! error:%v", err)
 	//	}
 	//	var decoder = schema.NewDecoder()
 	//	err = decoder.Decode(&ob, this.Post())
@@ -132,8 +133,7 @@ func (this *PushMLDataController) PushDataToDB() {
 	//		fmt.Println("解码表单数据失败!")
 	//		fmt.Println(err)
 	//	}
-	//	MyItems := strings.Split(this.FormValue("MyItems"), ",")
-	//	fmt.Println("MyItems---", ob.MyItems)
+
 	//	for k, v := range ob.MyItems {
 	//		fmt.Println(k, v)
 	//	}
@@ -150,5 +150,5 @@ func (this *PushMLDataController) PushDataToDB() {
 	if err != nil {
 		logs.Info("解析json数据失败，原因为 %v", err)
 	}
-	logs.Info(string(result))
+	logs.Info("后端拿到的数据为：%v", ob)
 }
