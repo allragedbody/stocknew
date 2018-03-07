@@ -21,6 +21,7 @@ func LoadMeta() []string {
 		"603177.SS",
 		"601766.SS",
 		"600807.SS",
-		"600519.SS"}
+		"600519.SS",
+		"300324.SZ"}
 	return str
 }
