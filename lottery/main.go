@@ -2,71 +2,154 @@ package main
 
 import (
 	"fmt"
-	"stocknew/lottery/model"
+	"stocknew/lottery/db"
+	"stocknew/lottery/process"
+	"stocknew/lottery/routers"
+	"strconv"
+	"strings"
+	"time"
+
+	"github.com/astaxie/beego"
+	"github.com/astaxie/beego/logs"
+
+	//	"github.com/astaxie/beego/logs"
 )
 
-var FirstPeriods = 669754
-var firstNumber int
+//var FirstPeriods = 669754
+//var firstNumber int
+var puttolettery []int
+var missdatalettery []int
 
-func main() {
-	fmt.Println("这是一个彩票游戏。")
+func initLog() error {
+	//	jsonConfig := `{
+	//        "filename" : "test.log",
+	//		"level":7
+	//    }`
 
-	fmt.Println("当前信息。")
-
-	n1 := &model.PKTen{}
-	n1.Periods = 669754
-	n1.FirstInfos = make([]*model.FirstInfo, 10)
-	n1.FirstInfos[0] = &model.FirstInfo{Number: 1, Miss: 20, MAXMiss: 20, AvarageMiss: 20}
-	n1.FirstInfos[1] = &model.FirstInfo{Number: 2, Miss: 3, MAXMiss: 3, AvarageMiss: 3}
-	n1.FirstInfos[2] = &model.FirstInfo{Number: 3, Miss: 1, MAXMiss: 1, AvarageMiss: 1}
-	n1.FirstInfos[3] = &model.FirstInfo{Number: 4, Miss: 5, MAXMiss: 5, AvarageMiss: 5}
-	n1.FirstInfos[4] = &model.FirstInfo{Number: 5, Miss: 2, MAXMiss: 2, AvarageMiss: 2}
-	n1.FirstInfos[5] = &model.FirstInfo{Number: 6, Miss: 20, MAXMiss: 20, AvarageMiss: 20}
-	n1.FirstInfos[6] = &model.FirstInfo{Number: 7, Miss: 4, MAXMiss: 4, AvarageMiss: 4}
-	n1.FirstInfos[7] = &model.FirstInfo{Number: 8, Miss: 0, MAXMiss: 0, AvarageMiss: 0}
-	n1.FirstInfos[8] = &model.FirstInfo{Number: 9, Miss: 20, MAXMiss: 20, AvarageMiss: 20}
-	n1.FirstInfos[9] = &model.FirstInfo{Number: 10, Miss: 8, MAXMiss: 8, AvarageMiss: 8}
-	fmt.Printf("当前期次 %v：\n", n1.Periods)
-	for _, nu := range n1.FirstInfos {
-		fmt.Printf("号码 %v 遗漏次数 %v 最大遗漏次数 %v 平均遗漏次数%v。\n", nu.Number, nu.Miss, nu.MAXMiss, nu.AvarageMiss)
-	}
-
-	firstNumber = 6
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 10
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 6
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 4
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 5
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 4
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 6
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 9
-	runLotteryFirst(firstNumber, n1)
-	firstNumber = 1
-	runLotteryFirst(firstNumber, n1)
-
-	fmt.Println("进入下注环节。")
-	fmt.Println("下注方案选择。")
-	fmt.Println("下注。")
-	fmt.Println("奖金结算。")
+	//	logs.SetLogger("file", jsonConfig)
+	//	logs.SetLogFuncCall(true)
+	return nil
 }
 
-func runLotteryFirst(firstNumber int, n1 *model.PKTen) {
-	fmt.Println("开奖。")
-	fmt.Printf("本次开出第一名的数字是 %v。\n", firstNumber)
-	fmt.Println("存储上一期开奖信息。")
-	fmt.Println("当前信息修正。")
+func main() {
+	err := initLog()
+	if err != nil {
+		fmt.Println("init log error:%v", err)
+		return
+	}
 
-	rewardNumbers := make([]int, 0)
-	rewardNumbers = append(rewardNumbers, firstNumber)
-	n1.ChangeInfos(FirstPeriods, rewardNumbers, n1)
-	fmt.Printf("当前期次 %v：\n", n1.Periods)
-	for _, nu := range n1.FirstInfos {
-		fmt.Printf("号码 %v 遗漏次数 %v 最大遗漏次数 %v 平均遗漏次数%v。\n", nu.Number, nu.Miss, nu.MAXMiss, nu.AvarageMiss)
+	logs.Info("这是一个彩票游戏。作者 邓云飞。")
+	err = db.Init()
+	if err != nil {
+		return
+	}
+	process.Init()
+	logs.Info("開始加載數據。")
+	go reloadLotteryData()
+	go caculateData()
+	routers.Init()
+	beego.SetStaticPath("/views", "views")
+	beego.Run()
+}
+
+//func runLotteryFirst(firstNumber int, n1 *model.PKTen) {
+//	fmt.Println("开奖。")
+//	fmt.Printf("本次开出第一名的数字是 %v。\n", firstNumber)
+//	fmt.Println("存储上一期开奖信息。")
+//	fmt.Println("当前信息修正。")
+
+//	rewardNumbers := make([]int, 0)
+//	rewardNumbers = append(rewardNumbers, firstNumber)
+//	n1.ChangeInfos(FirstPeriods, rewardNumbers, n1)
+//	fmt.Printf("当前期次 %v：\n", n1.Periods)
+//	for _, nu := range n1.FirstInfos {
+//		fmt.Printf("号码 %v 遗漏次数 %v 最大遗漏次数 %v 平均遗漏次数%v。\n", nu.Number, nu.Miss, nu.MAXMiss, nu.AvarageMiss)
+//	}
+//}
+
+func reloadLotteryData() {
+	for {
+		time.Sleep(time.Second * 10)
+		logs.Info("获取彩票历史数据。")
+		data, err := process.GetHistoryData()
+		if err != nil {
+			logs.Error("获取彩票历史数据失败。", err)
+			continue
+		}
+		logs.Info("data %v", data)
+		for k, v := range data {
+			numlist := strings.Split(v.Number, ",")
+			logs.Info("期数 %v,号码 %v", k, numlist)
+			err = process.RestoreData(k, numlist)
+			if err != nil {
+				fmt.Printf("第 %v 期彩票数据失败 %v", k, err)
+				continue
+			}
+			fmt.Printf("插入彩票数据成功。data %v.", data)
+		}
+
+	}
+}
+
+var currentPierod string
+var putTime int
+
+func caculateData() {
+	for {
+		time.Sleep(time.Second * 10)
+		logs.Info("获取彩票数据库数据。")
+		data, err := process.GetDBData()
+		if err != nil {
+			logs.Error("获取彩票数据库数据失败。", err)
+			continue
+		}
+		if currentPierod != data[0][0] {
+			currentPierod = data[0][0]
+		}
+
+		alldata, err := process.CalculateMiss(data)
+		if err != nil {
+			logs.Error("获取彩票数据库数据失败。", err)
+			continue
+		}
+		missdata := make([]int, 0)
+		missdata = append(missdata, alldata["1"].MissTime)
+		missdata = append(missdata, alldata["2"].MissTime)
+		missdata = append(missdata, alldata["3"].MissTime)
+		missdata = append(missdata, alldata["4"].MissTime)
+		missdata = append(missdata, alldata["5"].MissTime)
+		missdata = append(missdata, alldata["6"].MissTime)
+		missdata = append(missdata, alldata["7"].MissTime)
+		missdata = append(missdata, alldata["8"].MissTime)
+		missdata = append(missdata, alldata["9"].MissTime)
+		missdata = append(missdata, alldata["10"].MissTime)
+
+		process.MissDataLottery = missdata
+		logs.Info("计算遗漏数据为 %v", process.MissDataLottery)
+
+		putdata := process.CalculatePut(missdata)
+
+		if len(puttolettery) == 0 {
+			process.PuttoLottery = putdata
+			if currentPierod != data[0][0] {
+				putTime += 1
+			} else {
+				putTime = 1
+			}
+		} else {
+			for _, i := range puttolettery {
+				ne, _ := strconv.Atoi(data[0][1])
+				if ne == i {
+					process.PuttoLottery = putdata
+					if currentPierod != data[0][0] {
+						putTime = 1
+					} else {
+						putTime = 1
+					}
+				}
+			}
+		}
+
+		logs.Info("计算下注数据为 %v 次数为 %v", process.PuttoLottery, putTime)
 	}
 }
