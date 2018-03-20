@@ -14,6 +14,7 @@ import (
 
 var PuttoLottery []int
 var MissDataLottery []int
+var LotterPlans []model.LotterPlan
 
 var c *nettools.HttpClient
 
@@ -254,4 +255,8 @@ func CalculatePut(tenNums []int) []int {
 	sort.Ints(selectNums)
 	logs.Debug("本期采用号码 %v", selectNums)
 	return selectNums
+}
+
+func RestoreLotterResult(lps []model.LotterPlan) {
+	LotterPlans = lps
 }

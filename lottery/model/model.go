@@ -8,6 +8,13 @@ type Data struct {
 	Number   string `json:"number"`
 	Dateline string `json:"dateline"`
 }
+type LotterPlan struct {
+	CurrentPierod string `json:"currentPierod"`
+	NumberList    []int  `json:"numberList"`
+	PutTime       int    `json:"putTime"`
+	Status        string `json:"status"`
+	GetReward     bool   `json:"getReward"`
+}
 
 //func (*PKTen) ChangeInfos(fierstPeriods int, numbers []int, pkt *PKTen) *PKTen {
 //	pkt.Periods = pkt.Periods + 1

@@ -11,5 +11,6 @@ func Init() {
 	beego.Router("/lotterydata/:size", &controllers.LotteryController{}, "get:LotteryData")
 	beego.Router("/missdata/", &controllers.LotteryController{}, "get:MissData")
 	beego.Router("/putdata/", &controllers.LotteryController{}, "get:PutData")
+	beego.Router("/plan/", &controllers.LotteryController{}, "get:GetPlan")
 
 }

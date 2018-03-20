@@ -3,7 +3,7 @@
 body{
 	font-family: Baskerville, "Hoefler Text", Garamond, "Times New Roman", serif;
 	background: #e9f0f5 url(../images/pattern.png) repeat top left;
-	font-weight: 400;
+	font-weight: 300;
 	font-size: 12px;
 	color: #333;
 	overflow-y: hidden;
@@ -115,9 +115,9 @@ a:hover{
 	overflow: hidden;
 }
 .hs-content{
-	width: 500px;
+	width: 400px;
 	overflow-y: scroll;
-	height: 100%;
+	height: 90%;
 	float: left;
 	border-right: 1px dashed #A9BECD;
 	border-left: 1px dashed #A9BECD;
@@ -141,7 +141,7 @@ a:hover{
 	width: 400px;
 }
 .hs-inner{
-	padding: 30px 20px 10px 30px;
+	padding: 30px 20px 5px 30px;
 }
 .hs-inner p{
 	font-size: 18px;

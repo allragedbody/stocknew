@@ -65,6 +65,10 @@ func (this *LotteryController) PutData() {
 	this.Data["json"] = process.PuttoLottery
 	this.ServeJSON()
 }
+func (this *LotteryController) GetPlan() {
+	this.Data["json"] = process.LotterPlans
+	this.ServeJSON()
+}
 
 //type DrawStockController struct {
 //	beego.Controller

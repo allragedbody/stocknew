@@ -46,7 +46,7 @@ func CreateClient() *HttpClient {
 
 	tr := &http.Transport{
 		Dial: func(network, addr string) (net.Conn, error) {
-			c, err := net.DialTimeout(network, addr, time.Duration(1000)*time.Millisecond)
+			c, err := net.DialTimeout(network, addr, time.Duration(3000)*time.Millisecond)
 			if err != nil {
 				return nil, err
 			}
@@ -59,7 +59,7 @@ func CreateClient() *HttpClient {
 		MaxIdleConnsPerHost:   20,
 		ResponseHeaderTimeout: time.Duration(2000) * time.Millisecond}
 
-	httpClient.httpClient = &http.Client{Transport: tr, Timeout: time.Duration(4000) * time.Millisecond}
+	httpClient.httpClient = &http.Client{Transport: tr, Timeout: time.Duration(8000) * time.Millisecond}
 
 	return httpClient
 }

@@ -51,6 +51,7 @@ func (dc *DBClient) InsertData(k string, v []string) error {
 
 	if err != nil {
 		fmt.Printf("insert data error: %v\n", err)
+		tx.Rollback()
 		return err
 	}
 	for rows.Next() {
@@ -58,10 +59,12 @@ func (dc *DBClient) InsertData(k string, v []string) error {
 		if err != nil {
 			fmt.Printf(err.Error())
 			rows.Close()
+			tx.Rollback()
 			return err
 		}
 		if period.Valid {
 			rows.Close()
+			tx.Rollback()
 			return errors.New("数据已经录入。")
 		}
 	}
@@ -69,6 +72,7 @@ func (dc *DBClient) InsertData(k string, v []string) error {
 	if err != nil {
 		fmt.Printf(err.Error())
 		rows.Close()
+		tx.Rollback()
 		dc.Conn.Close()
 		return err
 	}

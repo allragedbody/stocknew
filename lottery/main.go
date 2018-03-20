@@ -9,9 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"stocknew/lottery/model"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-
 	//	"github.com/astaxie/beego/logs"
 )
 
@@ -69,7 +70,7 @@ func main() {
 
 func reloadLotteryData() {
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 30)
 		logs.Info("获取彩票历史数据。")
 		data, err := process.GetHistoryData()
 		if err != nil {
@@ -95,6 +96,7 @@ var currentPierod string
 var putTime int
 
 func caculateData() {
+	lotterPlans := make([]model.LotterPlan, 0)
 	for {
 		time.Sleep(time.Second * 10)
 		logs.Info("获取彩票数据库数据。")
@@ -102,9 +104,6 @@ func caculateData() {
 		if err != nil {
 			logs.Error("获取彩票数据库数据失败。", err)
 			continue
-		}
-		if currentPierod != data[0][0] {
-			currentPierod = data[0][0]
 		}
 
 		alldata, err := process.CalculateMiss(data)
@@ -127,29 +126,68 @@ func caculateData() {
 		process.MissDataLottery = missdata
 		logs.Info("计算遗漏数据为 %v", process.MissDataLottery)
 
-		putdata := process.CalculatePut(missdata)
-
-		if len(puttolettery) == 0 {
+		if len(lotterPlans) == 0 {
+			putdata := process.CalculatePut(missdata)
+			plan := model.LotterPlan{}
+			nextPeriodNum, _ := strconv.Atoi(data[0][0])
+			plan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
+			plan.NumberList = putdata
+			plan.GetReward = false
+			plan.PutTime = 1
+			plan.Status = "等开"
 			process.PuttoLottery = putdata
-			if currentPierod != data[0][0] {
-				putTime += 1
-			} else {
-				putTime = 1
-			}
+			logs.Info("第一次计算下注数据为 %v ", plan)
+			lotterPlans = append(lotterPlans, plan)
 		} else {
-			for _, i := range puttolettery {
-				ne, _ := strconv.Atoi(data[0][1])
-				if ne == i {
-					process.PuttoLottery = putdata
-					if currentPierod != data[0][0] {
-						putTime = 1
-					} else {
-						putTime = 1
+			//是否已经变更期数
+			l := len(lotterPlans)
+			lastplan := lotterPlans[l-1]
+			logs.Info("最后一次计算下注数据为 %v ", lastplan)
+
+			nextPeriodNum, _ := strconv.Atoi(data[0][0])
+			c, _ := strconv.Atoi(lastplan.CurrentPierod)
+
+			if nextPeriodNum == c {
+				//如果不中 则等开1 变更为倍投 2 ，行数不增加
+				//如果中了 则变为中，增加一行。
+				for _, i := range lastplan.NumberList {
+					rewardNum, _ := strconv.Atoi(data[0][1])
+					if rewardNum == i {
+						lastplan.GetReward = true
+						lastplan.Status = "中"
+						lotterPlans = lotterPlans[0 : l-1]
+						lotterPlans = append(lotterPlans, lastplan)
+						putdata := process.CalculatePut(missdata)
+						plan := model.LotterPlan{}
+						nextPeriodNum, _ := strconv.Atoi(data[0][0])
+						plan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
+						plan.NumberList = putdata
+						plan.GetReward = false
+						plan.PutTime = 1
+						plan.Status = "等开"
+						process.PuttoLottery = putdata
+						lotterPlans = append(lotterPlans, plan)
+						logs.Info("中奖了，计算下注数据为 %v ", plan)
+						break
 					}
+				}
+				if lastplan.GetReward != true {
+					lastplan.PutTime += 1
+					lastplan.Status = "倍投"
+					nextPeriodNum, _ := strconv.Atoi(data[0][0])
+					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
+					lotterPlans = lotterPlans[0 : l-1]
+					process.PuttoLottery = lastplan.NumberList
+					lotterPlans = append(lotterPlans, lastplan)
+					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
 				}
 			}
 		}
+		logs.Info("计算最终下注数据为: ")
+		for _, plans := range lotterPlans {
+			logs.Info("数据列表： %v ", plans)
+		}
 
-		logs.Info("计算下注数据为 %v 次数为 %v", process.PuttoLottery, putTime)
+		process.RestoreLotterResult(lotterPlans)
 	}
 }
