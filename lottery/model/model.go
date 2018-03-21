@@ -12,6 +12,7 @@ type LotterPlan struct {
 	CurrentPierod string `json:"currentPierod"`
 	NumberList    []int  `json:"numberList"`
 	PutTime       int    `json:"putTime"`
+	RealPutTime   int    `json:"realPutTime"`
 	Status        string `json:"status"`
 	GetReward     bool   `json:"getReward"`
 }

@@ -448,7 +448,7 @@ $.ajax({
 	     planhtml += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
 		 $.each(result, function(index, data){
 	 	  planhtml += "<div style=\"font-size: 10px ;\"></div>"; 
-		  planhtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> "+data.currentPierod+"期：</span>"+" <span style=\"font-size: 24px;\" class=\"tz_blueball\"> 号码："+data.numberList+"</span>"+" <span style=\"font-size: 24px;\" class=\"tz_blueball\"> （"+data.putTime+"）</span>"+" <span style=\"font-size: 24px;\" class=\"tz_blueball\"> "+data.status+"	</span>";
+		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"期:</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\">号码："+data.numberList+"</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> （"+data.putTime+"）</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.status+"	</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> 真实下注："+data.realPutTime+"次</span>";
 
 		
           });	

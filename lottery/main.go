@@ -70,7 +70,7 @@ func main() {
 
 func reloadLotteryData() {
 	for {
-		time.Sleep(time.Second * 30)
+		time.Sleep(time.Second * 10)
 		logs.Info("获取彩票历史数据。")
 		data, err := process.GetHistoryData()
 		if err != nil {
@@ -98,7 +98,7 @@ var putTime int
 func caculateData() {
 	lotterPlans := make([]model.LotterPlan, 0)
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 15)
 		logs.Info("获取彩票数据库数据。")
 		data, err := process.GetDBData()
 		if err != nil {
@@ -135,6 +135,7 @@ func caculateData() {
 			plan.GetReward = false
 			plan.PutTime = 1
 			plan.Status = "等开"
+			plan.RealPutTime = 0
 			process.PuttoLottery = putdata
 			logs.Info("第一次计算下注数据为 %v ", plan)
 			lotterPlans = append(lotterPlans, plan)
@@ -164,6 +165,7 @@ func caculateData() {
 						plan.NumberList = putdata
 						plan.GetReward = false
 						plan.PutTime = 1
+						plan.RealPutTime = 0
 						plan.Status = "等开"
 						process.PuttoLottery = putdata
 						lotterPlans = append(lotterPlans, plan)
@@ -173,6 +175,10 @@ func caculateData() {
 				}
 				if lastplan.GetReward != true {
 					lastplan.PutTime += 1
+					if lastplan.PutTime > 2 {
+						lastplan.RealPutTime = lastplan.PutTime - 2
+					}
+
 					lastplan.Status = "倍投"
 					nextPeriodNum, _ := strconv.Atoi(data[0][0])
 					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
