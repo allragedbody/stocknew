@@ -7,6 +7,7 @@ import (
 	"stocknew/lottery/nettools"
 	"strconv"
 	//	"github.com/axgle/mahonia"
+	"fmt"
 	"sort"
 
 	"github.com/astaxie/beego/logs"
@@ -39,6 +40,48 @@ func GetHistoryData() (map[string]*model.Data, error) {
 	}
 
 	return lotteryData, nil
+}
+
+func SendWeChat(lotteryPlan *model.LotterPlan) error {
+
+	access_token = ""
+
+	url := "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + access_token
+	pushData := make(map[string]*model.PushData, 0)
+	localtext = fmt.Sprintf(lotteryPlan.CurrentPierod + "---" + lotteryPlan.NumberList + "---" + lotteryPlan.RealPutTime)
+	pushData.Touser = "@all"
+	pushData.Msgtype = "text"
+	pushData.Agentid = 1
+	pushData.Text = model.Content{Content: localtext}
+
+	bytesData, err := json.Marshal(pushData)
+	if err != nil {
+		logs.Error("转换失败，错误：%v", err)
+		return err
+	}
+	reader := bytes.NewReader(bytesData)
+
+	req, err := http.NewRequest("POST", requrl, reader)
+	if err != nil {
+		logs.Error("请求失败1，错误：%v", err)
+		return err
+	}
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		logs.Error("请求失败2，错误：%v", err)
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logs.Error("获取接口数据失败，错误：%v", err)
+		return err
+	}
+	logs.Info("Send message body：%v", string(body))
+	return nil
 }
 
 func RestoreData(k string, v []string) error {

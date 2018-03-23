@@ -17,3 +17,8 @@ CREATE TABLE `pk10` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_period` (`period`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=254 DEFAULT CHARSET=utf8
+
+
+
+sc create lottery binpath= D:\project\src\stocknew\lottery/lottery.exe type= own start= auto displayname= lottery
+services.msc

@@ -17,6 +17,21 @@ type LotterPlan struct {
 	GetReward     bool   `json:"getReward"`
 }
 
+type Content struct {
+	Content string `json:"content"`
+}
+
+type PushData struct {
+	Touser    string `json:"touser"`
+	Toparty   string `json:"toparty"`
+	Totag     string `json:"totag"`
+	Msgtype   string `json:"msgtype"`
+	Agentid   int    `json:"agentid"`
+	GetReward bool   `json:"getReward"`
+	Text      Content
+	Safe      int `json:"safe"`
+}
+
 //func (*PKTen) ChangeInfos(fierstPeriods int, numbers []int, pkt *PKTen) *PKTen {
 //	pkt.Periods = pkt.Periods + 1
 //	for _, i := range numbers {

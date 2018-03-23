@@ -27,13 +27,13 @@
         <div id="hs-container" class="hs-container">
 			<aside class="hs-menu" id="hs-menu">
 				<div class="hs-headline">
-					<h1><small></small> PK10 <small></small></h1>
-					<span class="hs-author">一夜暴富不是梦</span>
+					<h1><small></small> Beijing race <small></small></h1>
+					<span class="hs-author">xxxxxx</span>
 				</div>
 				<nav>
-					<a href="#introduction"><span>开奖记录</span></a>
-					<a href="#chapter1"><span>算号及下注</span></a>
-					<a href="#chapter2"><span>中奖情况计算</span></a>
+					<a href="#introduction"><span>Chapter1</span></a>
+					<a href="#chapter1"><span>Chapter2</span></a>
+					<a href="#chapter2"><span>Chapter3</span></a>
 <!--					<a href="#chapter3"><span>Chapter III.</span><span>Struggle for Existence</span></a>
 					<a href="#chapter4"><span>Chapter IV.</span><span>Natural Selection</span></a>
 					<a href="#chapter5"><span>Chapter V.</span><span>Laws of Variation</span></a>
@@ -54,8 +54,8 @@
 				<div class="hs-content-wrapper">
 					<article class="hs-content" id="introduction">
 						<div class="hs-inner">
-							<h2>开奖记录</h2>
-							<p>北京PK拾[官] - 开奖结果列表</p>
+							<h2>Chapter1</h2>
+							<p>records</p>
 							<style>
 							{
 							  font-family: verdana;
@@ -109,16 +109,23 @@
 					</article>
 					<article class="hs-content" id="chapter1">
 						<div class="hs-inner">
-							<h2>算号及下注</h2>
-						<div id=missnumbers></div>
-	                    <div id=putnumbers></div>
+							<h2>Chapter2</h2>
+							<div id=missnumbers></div>
+	                    	<div id=putnumbers></div>						
 						</div>
 					</article>
 					<article class="hs-content" id="chapter2">
 						<div class="hs-inner">
-							<h2>中奖情况计算</h2>
-						<div id=getplans></div>
+							<h2>Chapter3</h2>		
 						</div>
+						<div id=getplans></div>										
+			
+						</div>
+						<div>
+							<audio id="ttt">
+							<source src="http://127.0.0.1/views/ttt.mp3" type="audio/mp3" >
+							</audio>
+						</div>	
 					</article>
 <!--					<article class="hs-content" id="chapter3">
 						<div class="hs-inner">
@@ -387,17 +394,17 @@ var planhtml=""
       dataType: "JSON",
       success:function(result){
           $.each(result.historydatas, function(index, data){
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[0]+"期号码</span>";
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[1]+" </span>";
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[2]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[3]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[4]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[5]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[6]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[7]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[8]+" </span>";   
-          html += " <span style=\"font-size: 24px;\" class=\"tz_blueball\">"+data[9]+" </span>";   
-          html += " <span style=\"font-size: 24px ;\" class=\"tz_blueball\">"+data[10]+"</span>";  
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[0]+"---|</span>";
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[1]+"|</span>";
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[2]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[3]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[4]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[5]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[6]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[7]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[8]+"|</span>";   
+          html += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[9]+"|</span>";   
+          html += " <span style=\"font-size: 20px ;\" class=\"tz_blueball\">"+data[10]+"|</span>";  
           html += "<div style=\"font-size: 20px ;\"></div>"; 
 <!--		  console.log(data);-->
           });	
@@ -412,10 +419,10 @@ $.ajax({
       type: "GET",
       dataType: "JSON",
       success:function(result){
-		 misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">号码遗漏：</span>";
+		 misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">M：|</span>";
 		 $.each(result, function(index, data){
 	
-		  misshtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> "+data+"</span>";
+		  misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data+"|</span>";
           });	
           misshtml += "<div style=\"font-size: 20px ;\"></div>"; 	
 		  document.getElementById("missnumbers").innerHTML = (misshtml);
@@ -428,7 +435,7 @@ $.ajax({
       type: "GET",
       dataType: "JSON",
       success:function(result){
-	     puthtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">机器下注号码：</span>";
+	     puthtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">P：</span>";
 		 $.each(result, function(index, data){
 	
 		  puthtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> "+data+"</span>";
@@ -439,6 +446,8 @@ $.ajax({
       }
   	});
 
+var realtime=0
+
 $.ajax({
       url: "http://127.0.0.1/plan/",
       async: false,
@@ -446,18 +455,40 @@ $.ajax({
       dataType: "JSON",
       success:function(result){
 	     planhtml += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
-		 $.each(result, function(index, data){
+		 $.each(result.reverse(), function(index, data){
 	 	  planhtml += "<div style=\"font-size: 10px ;\"></div>"; 
-		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"期:</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\">号码："+data.numberList+"</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> （"+data.putTime+"）</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.status+"	</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> 真实下注："+data.realPutTime+"次</span>";
-
+		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"----"+data.numberList+"</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> （"+data.putTime+"）</span>"
+		 if (index==0){
+		     realtime = data.realPutTime
+		 }
 		
+		  if (data.status=="等开"){
+			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">ddd</span>"
+		  }
+		  if (data.status=="中"){
+			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">zzz</span>"
+		  }
+		  if (data.status=="倍投"){
+			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">bbb</span>"
+		  }
+
+		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">---"+data.realPutTime+"</span>";
           });	
           planhtml += "<div style=\"font-size: 10px ;\"><p></p></div>"; 	
-		  document.getElementById("getplans").innerHTML = (planhtml);
-		
+
+		  document.getElementById("getplans").innerHTML = (planhtml);	
+
       }
   	});
 
+
+	audio=document.getElementById("ttt");	
+	console.log(realtime)
+	if (realtime>0){
+	   	audio.onloadstart=audio.play();
+	}
+
+</script> 
 		</script>
     </body>
 </html>

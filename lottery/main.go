@@ -22,13 +22,13 @@ var puttolettery []int
 var missdatalettery []int
 
 func initLog() error {
-	//	jsonConfig := `{
-	//        "filename" : "test.log",
-	//		"level":7
-	//    }`
+	jsonConfig := `{
+	        "filename" : "d:/lottery.log",
+			"level":7
+	    }`
 
-	//	logs.SetLogger("file", jsonConfig)
-	//	logs.SetLogFuncCall(true)
+	logs.SetLogger("file", jsonConfig)
+	logs.SetLogFuncCall(true)
 	return nil
 }
 
@@ -184,6 +184,11 @@ func caculateData() {
 					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
 					lotterPlans = lotterPlans[0 : l-1]
 					process.PuttoLottery = lastplan.NumberList
+
+					if lastplan.PutTime > 0 {
+						logs.Info("发短信给企业号 内容为 %v ", lastplan)
+					}
+
 					lotterPlans = append(lotterPlans, lastplan)
 					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
 				}
