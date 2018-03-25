@@ -13,9 +13,9 @@ import (
 
 var (
 	dbhostsip  = "127.0.0.1:3306" //IP地址
-	dbusername = "root"           //用户名
-	dbpassword = ""               //密码
-	dbname     = "lottery"        //数据库名
+	dbusername = "pkpk"           //用户名
+	dbpassword = "@Dyf19840218@"  //密码
+	dbname     = "pkpk"           //数据库名
 )
 
 type DBClient struct {
