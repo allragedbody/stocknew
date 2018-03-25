@@ -97,6 +97,7 @@ var putTime int
 
 func caculateData() {
 	lotterPlans := make([]model.LotterPlan, 0)
+	sendtime := 0
 	for {
 		time.Sleep(time.Second * 15)
 		logs.Info("获取彩票数据库数据。")
@@ -185,12 +186,26 @@ func caculateData() {
 					lotterPlans = lotterPlans[0 : l-1]
 					process.PuttoLottery = lastplan.NumberList
 
-					if lastplan.PutTime > 0 {
-						logs.Info("发短信给企业号 内容为 %v ", lastplan)
+					if lastplan.RealPutTime > 0 {
+						if sendtime > 3 {
+							logs.Info("超过3次不再提醒")
+						} else {
+							logs.Info("发短信给企业号 内容为 %v ", lastplan)
+							err := process.SendWeChat(lastplan)
+							if err != nil {
+								logs.Info("发送计划失败： %v ", err)
+							} else {
+								sendtime += 1
+							}
+						}
+
+					} else {
+						sendtime = 0
 					}
 
 					lotterPlans = append(lotterPlans, lastplan)
 					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
+
 				}
 			}
 		}

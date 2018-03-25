@@ -7,8 +7,12 @@ import (
 	"stocknew/lottery/nettools"
 	"strconv"
 	//	"github.com/axgle/mahonia"
+	//	"bytes"
 	"fmt"
+	//	"io/ioutil"
+	//	"net/http"
 	"sort"
+	"time"
 
 	"github.com/astaxie/beego/logs"
 )
@@ -42,44 +46,45 @@ func GetHistoryData() (map[string]*model.Data, error) {
 	return lotteryData, nil
 }
 
-func SendWeChat(lotteryPlan *model.LotterPlan) error {
+func SendWeChat(lotteryPlan model.LotterPlan) error {
+	tkurl := "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=ww3bc839d9990b1e89&corpsecret=eF05WFY7SRfK1hpjjb3UxSzGZnFnyREtKK47PvMloN8"
 
-	access_token = ""
+	tkbody, err := c.HttpDoGet(tkurl)
+	if err != nil {
+		logs.Error("获取token数据失败，错误: %v", err)
+		return err
+	}
 
-	url := "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + access_token
-	pushData := make(map[string]*model.PushData, 0)
-	localtext = fmt.Sprintf(lotteryPlan.CurrentPierod + "---" + lotteryPlan.NumberList + "---" + lotteryPlan.RealPutTime)
+	tr := &model.TokenResp{}
+
+	err = json.Unmarshal(tkbody, tr)
+	if err != nil {
+		logs.Error("获取token数据失败，错误：%v", err)
+		return err
+	}
+
+	if tr.ErrCode != 0 {
+		logs.Error("获取token数据失败，错误：%v", tr.ErrMsg)
+		return err
+	}
+
+	access_token := tr.AccessToken
+
+	pushData := &model.PushData{}
+	now := time.Now().Format("2006-01-02 15:04:05")
+
+	localtext := fmt.Sprintf("(%v)(%v)(%v)(%v)", lotteryPlan.CurrentPierod, lotteryPlan.NumberList, lotteryPlan.RealPutTime, now)
 	pushData.Touser = "@all"
 	pushData.Msgtype = "text"
-	pushData.Agentid = 1
+	pushData.Agentid = 1000002
 	pushData.Text = model.Content{Content: localtext}
 
-	bytesData, err := json.Marshal(pushData)
+	body, err := c.HttpDoPost(pushData, access_token)
 	if err != nil {
-		logs.Error("转换失败，错误：%v", err)
-		return err
-	}
-	reader := bytes.NewReader(bytesData)
-
-	req, err := http.NewRequest("POST", requrl, reader)
-	if err != nil {
-		logs.Error("请求失败1，错误：%v", err)
+		logs.Error("发送短信失败，错误: %v", err)
 		return err
 	}
 
-	resp, err := c.httpClient.Do(req)
-	if err != nil {
-		logs.Error("请求失败2，错误：%v", err)
-		return err
-	}
-
-	defer resp.Body.Close()
-
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		logs.Error("获取接口数据失败，错误：%v", err)
-		return err
-	}
 	logs.Info("Send message body：%v", string(body))
 	return nil
 }

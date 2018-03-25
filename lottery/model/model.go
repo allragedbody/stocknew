@@ -22,14 +22,21 @@ type Content struct {
 }
 
 type PushData struct {
-	Touser    string `json:"touser"`
-	Toparty   string `json:"toparty"`
-	Totag     string `json:"totag"`
-	Msgtype   string `json:"msgtype"`
-	Agentid   int    `json:"agentid"`
-	GetReward bool   `json:"getReward"`
-	Text      Content
-	Safe      int `json:"safe"`
+	Touser    string  `json:"touser"`
+	Toparty   string  `json:"toparty"`
+	Totag     string  `json:"totag"`
+	Msgtype   string  `json:"msgtype"`
+	Agentid   int     `json:"agentid"`
+	GetReward bool    `json:"getReward"`
+	Text      Content `json:"text"`
+	Safe      int     `json:"safe"`
+}
+
+type TokenResp struct {
+	ErrCode     int    `json:"errcode"`
+	ErrMsg      string `json:"errmsg"`
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int    `json:"expires_in"`
 }
 
 //func (*PKTen) ChangeInfos(fierstPeriods int, numbers []int, pkt *PKTen) *PKTen {

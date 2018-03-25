@@ -2,13 +2,16 @@ package nettools
 
 import (
 	//	"crypto/tls"
-	"errors"
+	//	"errors"
 	"io/ioutil"
 	"net"
 	"net/http"
 	//	"net/url"
-	"stocknew/fortune/db"
+	//	"stocknew/lottery/db"
 	//	"strings"
+	"bytes"
+	"encoding/json"
+	"stocknew/lottery/model"
 	"time"
 
 	"github.com/astaxie/beego/logs"
@@ -25,19 +28,6 @@ type StockMeter struct {
 	StartDate    string //开始日期
 	EndDate      string //截止日期
 	AppCode      string //Auth
-}
-
-func (st *StockMeter) GetDateRange(code string) (string, string, error) {
-	dc := db.GetDB()
-	start, stop, err := dc.GetDateRange(code)
-	if err != nil {
-		return "error", "error", err
-	}
-	if stop == "notupdate" {
-		return "没有新数据", "没有新数据", errors.New("没有新数据")
-	}
-
-	return start, stop, nil
 }
 
 func CreateClient() *HttpClient {
@@ -65,7 +55,6 @@ func CreateClient() *HttpClient {
 }
 
 func (client *HttpClient) HttpDoGet(requrl string) ([]byte, error) {
-
 	req, err := http.NewRequest("GET", requrl, nil)
 	if err != nil {
 		logs.Error("请求失败1，错误：%v", err)
@@ -73,6 +62,39 @@ func (client *HttpClient) HttpDoGet(requrl string) ([]byte, error) {
 	}
 
 	//	req.Header.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36")
+	resp, err := client.httpClient.Do(req)
+	if err != nil {
+		logs.Error("请求失败2，错误：%v", err)
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logs.Error("获取接口数据失败，错误：%v", err)
+		return nil, err
+	}
+	logs.Info("body：%v", string(body))
+	return body, nil
+}
+
+func (client *HttpClient) HttpDoPost(pushData *model.PushData, access_token string) ([]byte, error) {
+	requrl := "https://qyapi.weixin.qq.com/cgi-bin/message/send?access_token=" + access_token
+
+	bytesData, err := json.Marshal(pushData)
+	if err != nil {
+		logs.Error("转换失败，错误：%v", err)
+		return nil, err
+	}
+	reader := bytes.NewReader(bytesData)
+
+	req, err := http.NewRequest("POST", requrl, reader)
+	if err != nil {
+		logs.Error("请求失败1，错误：%v", err)
+		return nil, err
+	}
+
 	resp, err := client.httpClient.Do(req)
 	if err != nil {
 		logs.Error("请求失败2，错误：%v", err)
