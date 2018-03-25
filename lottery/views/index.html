@@ -123,7 +123,7 @@
 						</div>
 						<div>
 							<audio id="ttt">
-							<source src="http://127.0.0.1/views/ttt.mp3" type="audio/mp3" >
+							<source src="/views/ttt.mp3" type="audio/mp3" >
 							</audio>
 						</div>	
 					</article>
@@ -388,7 +388,7 @@ var misshtml = ""
 var puthtml = ""
 var planhtml=""
 	$.ajax({
-      url: "http://127.0.0.1/lotterydata/50",
+      url: "/lotterydata/50",
       async: false,
       type: "GET",
       dataType: "JSON",
@@ -414,7 +414,7 @@ var planhtml=""
 
 
 $.ajax({
-      url: "http://127.0.0.1/missdata/",
+      url: "/missdata/",
       async: false,
       type: "GET",
       dataType: "JSON",
@@ -430,7 +430,7 @@ $.ajax({
   	});
 
 $.ajax({
-      url: "http://127.0.0.1/putdata/",
+      url: "/putdata/",
       async: false,
       type: "GET",
       dataType: "JSON",
@@ -449,7 +449,7 @@ $.ajax({
 var realtime=0
 
 $.ajax({
-      url: "http://127.0.0.1/plan/",
+      url: "/plan/",
       async: false,
       type: "GET",
       dataType: "JSON",
