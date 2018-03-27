@@ -1,7 +1,7 @@
 http://api.caipiaokong.cn/lottery/?name=bjpks&format=json&uid=963680&token=db5b10550d6bf7271ec6a105a391816f51e60ccf
 
 数据库建表
-CREATE TABLE `pk10` (
+CREATE TABLE `PK10` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `period` varchar(10) NOT NULL DEFAULT '',
   `number1` varchar(2) NOT NULL,
