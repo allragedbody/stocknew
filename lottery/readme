@@ -16,9 +16,19 @@ CREATE TABLE `PK10` (
   `number10` varchar(2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_period` (`period`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=254 DEFAULT CHARSET=utf8
+) ENGINE=InnoDB AUTO_INCREMENT=254 DEFAULT CHARSET=utf8;
 
-
+CREATE TABLE `historypush` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `currentPierod` varchar(20) DEFAULT NULL,
+  `numberList` varchar(100) DEFAULT NULL,
+  `putTime` int(10) DEFAULT NULL,
+  `realPutTime` int(10) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `getReward` int(10) DEFAULT NULL,
+  `createTime` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 sc create lottery binpath= D:\project\src\stocknew\lottery/lottery.exe type= own start= auto displayname= lottery
 services.msc

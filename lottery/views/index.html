@@ -25,51 +25,48 @@
     </head>
     <body>
         <div id="hs-container" class="hs-container">
-	  <aside class="hs-menu" id="hs-menu">
-            <div class="hs-headline">
-	    <h1><small></small> GOGOGO <small></small></h1>
-	    <span class="hs-author">xxxxxx</span>
-          </div>
-          <nav>
-	    <a href="#chapter1"><span>Chapter1</span></a>
-	    <a href="#chapter2"><span>Chapter2</span></a>
-	    <a href="#chapter3"><span>Chapter3</span></a>
-          </nav>
-	</aside>
+			<aside class="hs-menu" id="hs-menu">
+				<div class="hs-headline">
+					<h1><small></small> Go Go Go <small></small></h1>
+					<span class="hs-author">τα κότσια του πλούτου από μια σοφία</span>
+				</div>
+				<nav>
+					<a href="#chapter1"><span>δεδομένα</span></a>
+					<a href="#chapter2"><span>Σχέδιο</span></a>
+					<a href="#chapter3"><span>αλγόριθμο.</span></a>
+				</nav>
+			</aside>
 			<a href="#hs-menu" class="hs-totop-link">Go to the top</a>
 			<div class="hs-content-scroller">
 				<div class="hs-content-wrapper">
 					<article class="hs-content" id="chapter1">
-						<div class="hs-inner">
-							<h2>Chapter1</h2>
-							<p>records</p>
-						<div>
+					    <div class="hs-inner">
+							<h2>δεδομένα</h2>
 						<div id=loadnumbers></div>
+                        </div> 
 					</article>
 					<article class="hs-content" id="chapter2">
-						<div class="hs-inner">
-				                	<h2>Chapter2</h2>		
-						</div>
-						<div id=getplans></div>										
-						</div>
-						<div>
-							<audio id="ttt">
-							<source src="/views/ttt.mp3" type="audio/mp3" >
-							</audio>
-						</div>	
+					    <div class="hs-inner">
+							<h2>Σχέδιο</h2>
+                                <div id=getplans></div>
+                                <div>
+                                    <audio id="ttt">
+                                    <source src="/views/ttt.mp3" type="audio/mp3" >
+                                    </audio>
+                                </div>
+					    </div>
 					</article>
-                                        <article class="hs-content" id="chapter3">
-                                                <div class="hs-inner">
-                                                        <h2>Chapter3</h2>
-                                                        <div id=missnumbers></div>
-                                                        <div id=putnumbers></div>
-                                                </div>
-                                        </article>
+					<article class="hs-content" id="chapter3">
+					    <div class="hs-inner">
+							<h2>αλγόριθμο.</h2>		
+                                <div id=missnumbers></div>
+                                <div id=putnumbers></div>
 
-
+                            </div>
+					</article>
 				</div>
 			</div>
-                </div>
+        </div>
 		<script type="text/javascript">
 			head.js(
 				{ jquery : "js/jquery-1.7.2.min.js" },
@@ -156,22 +153,23 @@ $.ajax({
 	     planhtml += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
 		 $.each(result.reverse(), function(index, data){
 	 	  planhtml += "<div style=\"font-size: 10px ;\"></div>"; 
-		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"----"+data.numberList+"</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> （"+data.putTime+"）</span>"
+		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"-"+data.numberList+"</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> -("+data.putTime+")</span>"     
 		 if (index==0){
 		     realtime = data.realPutTime
 		 }
 		
 		  if (data.status=="等开"){
-			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">ddd</span>"
+			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-D</span>"
 		  }
 		  if (data.status=="中"){
-			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">zzz</span>"
+			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-Z</span>"
 		  }
 		  if (data.status=="倍投"){
-			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">bbb</span>"
+			  planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-B</span>"
 		  }
 
-		  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">---"+data.realPutTime+"</span>";
+		  planhtml += " <span style=\"font-size: 18px;\" class=\"tz_blueball\"> -["+data.createTime+"]</span>" ;
+		
           });	
           planhtml += "<div style=\"font-size: 10px ;\"><p></p></div>"; 	
 
@@ -187,7 +185,6 @@ $.ajax({
 	   	audio.onloadstart=audio.play();
 	}
 
-</script> 
 		</script>
     </body>
 </html>

@@ -21,15 +21,6 @@ type HttpClient struct {
 	httpClient *http.Client
 }
 
-type StockMeter struct {
-	GetType      string //查找类别
-	ProdCode     string //股票代码
-	CandlePeriod string //时间周期
-	StartDate    string //开始日期
-	EndDate      string //截止日期
-	AppCode      string //Auth
-}
-
 func CreateClient() *HttpClient {
 	logs.Info("打开一个客户端。")
 	httpClient := &HttpClient{}
@@ -75,6 +66,7 @@ func (client *HttpClient) HttpDoGet(requrl string) ([]byte, error) {
 		logs.Error("获取接口数据失败，错误：%v", err)
 		return nil, err
 	}
+
 	logs.Info("body：%v", string(body))
 	return body, nil
 }

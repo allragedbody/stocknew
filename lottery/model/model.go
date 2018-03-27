@@ -8,6 +8,16 @@ type Data struct {
 	Number   string `json:"number"`
 	Dateline string `json:"dateline"`
 }
+
+type LotteryErrBody struct {
+	Status ErrBody `json:"status"`
+}
+
+type ErrBody struct {
+	Code string `json:code`
+	Text string `json:text`
+}
+
 type LotterPlan struct {
 	CurrentPierod string `json:"currentPierod"`
 	NumberList    []int  `json:"numberList"`
@@ -15,6 +25,7 @@ type LotterPlan struct {
 	RealPutTime   int    `json:"realPutTime"`
 	Status        string `json:"status"`
 	GetReward     bool   `json:"getReward"`
+	CreateTime    string `json:"createTime"`
 }
 
 type Content struct {

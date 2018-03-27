@@ -70,11 +70,11 @@ func main() {
 
 func reloadLotteryData() {
 	for {
-		time.Sleep(time.Second * 10)
+		time.Sleep(time.Second * 5)
 		logs.Info("获取彩票历史数据。")
 		data, err := process.GetHistoryData()
 		if err != nil {
-			logs.Error("获取彩票历史数据失败。", err)
+			logs.Error("获取彩票历史数据失败。错误：%v", err)
 			continue
 		}
 		logs.Info("data %v", data)
@@ -98,10 +98,12 @@ var putTime int
 func caculateData() {
 	lotterPlans := make([]model.LotterPlan, 0)
 	sendtime := 0
+	var lastmysqlplan int
 	for {
-		time.Sleep(time.Second * 15)
+		time.Sleep(time.Second * 10)
 		logs.Info("获取彩票数据库数据。")
-		data, err := process.GetDBData()
+
+		data, err := process.GetDBData(lastmysqlplan)
 		if err != nil {
 			logs.Error("获取彩票数据库数据失败。", err)
 			continue
@@ -137,8 +139,15 @@ func caculateData() {
 			plan.PutTime = 1
 			plan.Status = "等开"
 			plan.RealPutTime = 0
+			plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 			process.PuttoLottery = putdata
+
 			logs.Info("第一次计算下注数据为 %v ", plan)
+			//存数据库
+			err := process.RestorePlan(plan)
+			if err != nil {
+				logs.Error("RestorePlanToDB [%v] err: %v", plan, err)
+			}
 			lotterPlans = append(lotterPlans, plan)
 		} else {
 			//是否已经变更期数
@@ -168,9 +177,15 @@ func caculateData() {
 						plan.PutTime = 1
 						plan.RealPutTime = 0
 						plan.Status = "等开"
+						plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 						process.PuttoLottery = putdata
 						lotterPlans = append(lotterPlans, plan)
 						logs.Info("中奖了，计算下注数据为 %v ", plan)
+						//存数据库
+						err := process.RestorePlan(plan)
+						if err != nil {
+							logs.Error("RestorePlanToDB [%v] err: %v", plan, err)
+						}
 						break
 					}
 				}
@@ -185,7 +200,7 @@ func caculateData() {
 					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
 					lotterPlans = lotterPlans[0 : l-1]
 					process.PuttoLottery = lastplan.NumberList
-
+					lastplan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 					if lastplan.RealPutTime > 0 {
 						if sendtime > 3 {
 							logs.Info("超过3次不再提醒")
@@ -205,7 +220,11 @@ func caculateData() {
 
 					lotterPlans = append(lotterPlans, lastplan)
 					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
-
+					//存数据库
+					err := process.RestorePlan(lastplan)
+					if err != nil {
+						logs.Error("RestorePlanToDB [%v] err: %v", lastplan, err)
+					}
 				}
 			}
 		}
@@ -213,7 +232,9 @@ func caculateData() {
 		for _, plans := range lotterPlans {
 			logs.Info("数据列表： %v ", plans)
 		}
+		n := len(lotterPlans)
 
+		lastmysqlplan, _ = strconv.Atoi(lotterPlans[n-1].CurrentPierod)
 		process.RestoreLotterResult(lotterPlans)
 	}
 }

@@ -43,7 +43,7 @@ func (this *LotteryController) LotteryData() {
 		return
 	}
 	dbconn := db.GetDB()
-	data, err := dbconn.GetLotterData(size)
+	data, err := dbconn.GetLotterData(0, size)
 	if err != nil {
 		this.Ctx.WriteString(err.Error())
 		return

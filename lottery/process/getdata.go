@@ -8,6 +8,7 @@ import (
 	"strconv"
 	//	"github.com/axgle/mahonia"
 	//	"bytes"
+	"errors"
 	"fmt"
 	//	"io/ioutil"
 	//	"net/http"
@@ -27,6 +28,8 @@ func Init() {
 	c = nettools.CreateClient()
 }
 
+//{"status":{"code":"403","text":"请求超频,违规3次"}}
+
 func GetHistoryData() (map[string]*model.Data, error) {
 	lotteryData := make(map[string]*model.Data, 0)
 	url := "http://api.caipiaokong.cn/lottery/?name=bjpks&format=json&uid=963680&token=db5b10550d6bf7271ec6a105a391816f51e60ccf"
@@ -37,6 +40,19 @@ func GetHistoryData() (map[string]*model.Data, error) {
 		return lotteryData, err
 	}
 
+	//{"status":{"code":"403","text":"请求超频,违规3次"}}
+
+	errbody := model.LotteryErrBody{}
+	err = json.Unmarshal([]byte(body), &errbody)
+	if err != nil {
+		logs.Error("11111111111111111111111111111解析数据失败，错误: %v", err)
+		return lotteryData, err
+	}
+	logs.Error("222222222222222222222222222222222222222222: %v", err)
+	if errbody.Status.Code == "403" {
+		return lotteryData, errors.New("访问超频。")
+	}
+	logs.Error("333333333333333333333333333333333333: %v", err)
 	err = json.Unmarshal([]byte(body), &lotteryData)
 	if err != nil {
 		logs.Error("解析数据失败，错误: %v", err)
@@ -98,6 +114,15 @@ func RestoreData(k string, v []string) error {
 	return nil
 }
 
+func RestorePlan(lp model.LotterPlan) error {
+	dbconn := db.GetDB()
+	err := dbconn.RestorePlanToDB(lp.CurrentPierod, lp.NumberList, lp.PutTime, lp.RealPutTime, lp.Status, lp.GetReward, lp.CreateTime)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 ////http://hq.sinajs.cn/list=sz000158,sh601766
 //func convertToString(src string, srcCode string, tagCode string) string {
 //	srcCoder := mahonia.NewDecoder(srcCode)
@@ -108,9 +133,9 @@ func RestoreData(k string, v []string) error {
 //	return result
 //}
 
-func GetDBData() ([][]string, error) {
+func GetDBData(cur int) ([][]string, error) {
 	dbconn := db.GetDB()
-	data, err := dbconn.GetLotterData(1000)
+	data, err := dbconn.GetLotterData(cur, 1000)
 	if err != nil {
 		return nil, err
 	}
