@@ -139,7 +139,7 @@ func caculateData() {
 			plan.PutTime = 1
 			plan.Status = "等开"
 			plan.RealPutTime = 0
-			plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
+			plan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
 			process.PuttoLottery = putdata
 
 			logs.Info("第一次计算下注数据为 %v ", plan)
@@ -177,7 +177,7 @@ func caculateData() {
 						plan.PutTime = 1
 						plan.RealPutTime = 0
 						plan.Status = "等开"
-						plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
+						plan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
 						process.PuttoLottery = putdata
 						lotterPlans = append(lotterPlans, plan)
 						logs.Info("中奖了，计算下注数据为 %v ", plan)
@@ -200,7 +200,7 @@ func caculateData() {
 					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
 					lotterPlans = lotterPlans[0 : l-1]
 					process.PuttoLottery = lastplan.NumberList
-					lastplan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
+					lastplan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
 					if lastplan.RealPutTime > 0 {
 						if sendtime > 3 {
 							logs.Info("超过3次不再提醒")

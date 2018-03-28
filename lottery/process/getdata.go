@@ -87,7 +87,7 @@ func SendWeChat(lotteryPlan model.LotterPlan) error {
 	access_token := tr.AccessToken
 
 	pushData := &model.PushData{}
-	now := time.Now().Format("2006-01-02 15:04:05")
+	now := time.Now().UTC().Format("2006-01-02 15:04:05")
 
 	localtext := fmt.Sprintf("(%v)(%v)(%v)(%v)", lotteryPlan.CurrentPierod, lotteryPlan.NumberList, lotteryPlan.RealPutTime, now)
 	pushData.Touser = "@all"
