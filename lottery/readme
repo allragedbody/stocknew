@@ -42,3 +42,6 @@ root
 
 pkpk
 @Dyf19840218@
+
+count
+mysql -upkpk -h127.0.0.1 -P3306 -p@Dyf19840218@ -e "use pkpk; select * from PK10 where id>680 order by period;"|grep -v number1 > numbers.list;cat numbers.list |sed 's/\t/|/g'

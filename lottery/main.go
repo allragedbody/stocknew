@@ -48,6 +48,10 @@ func main() {
 	logs.Info("開始加載數據。")
 	go reloadLotteryData()
 	go caculateData()
+beego.NSNamespace("/*",
+            //Options用于跨域复杂请求预检
+            beego.NSRouter("/*", &v1.BaseController{}, "options:Options"),
+        ),
 	routers.Init()
 	beego.SetStaticPath("/views", "views")
 	beego.Run()
