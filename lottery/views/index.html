@@ -221,6 +221,25 @@ $.ajax({
         });
 
 
+$.ajax({
+      url: "http://54.250.253.42:8888/putdata/",
+      async: false,
+      type: "GET",
+      dataType: "JSON",
+      success:function(result){
+             puthtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">P：</span>";
+                 $.each(result, function(index, data){
+
+                  puthtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> "+data+"</span>";
+          });
+          puthtml += "<div style=\"font-size: 20px ;\"></div>";
+                  document.getElementById("newputnumbers").innerHTML = (puthtml);
+
+      }
+        });
+
+
+
 	audio=document.getElementById("ttt");	
 	console.log(realtime)
 	if (realtime>0){

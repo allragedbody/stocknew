@@ -19,6 +19,7 @@ import (
 )
 
 var PuttoLottery []int
+var PuttoLotteryMax4 []int
 var MissDataLottery []int
 var LotterPlans []model.LotterPlan
 
@@ -289,6 +290,64 @@ func CalculatePut(tenNums []int) []int {
 	return selectNums
 }
 
+func NewCalculatePut(tenNums []int) []int {
+	nums := make(map[int]int, 0)
+	for i, v := range tenNums {
+		nums[i] = v
+	}
+	sort.Ints(tenNums)
+
+	selectNums := make([]int, 0)
+
+	for k, v := range nums {
+		if v == tenNums[1] {
+			logs.Info("选择第1个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+		if v == tenNums[2] {
+			logs.Info("选择第2个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+		if v == tenNums[3] {
+			logs.Info("选择第3个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+		if v == tenNums[8] {
+			logs.Info("选择第4个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+		if v == tenNums[9] {
+			logs.Info("选择第5个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+
+		if v == tenNums[4] {
+			logs.Info("选择第6个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+		if v == tenNums[6] {
+			logs.Info("选择第6个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+		if v == tenNums[0] {
+			logs.Info("选择第6个号码是 %v", k+1)
+			selectNums = append(selectNums, k+1)
+			continue
+		}
+	}
+	sort.Ints(selectNums)
+	logs.Debug("new本期采用号码 %v", selectNums)
+	return selectNums
+}
+
 func RestoreLotterResult(lps []model.LotterPlan) {
 	LotterPlans = lps
 }
+

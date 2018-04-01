@@ -7,10 +7,10 @@ import (
 )
 
 func Init() {
-        beego.NSNamespace("/*",
-            //Options用于跨域复杂请求预检
-            beego.NSRouter("/*", &controllers.BaseController{}, "options:Options"),
-        )
+	beego.NSNamespace("/*",
+		//Options用于跨域复杂请求预检
+		beego.NSRouter("/*", &controllers.BaseController{}, "options:Options"),
+	)
 
 	beego.Router("/", &controllers.MainController{})
 	beego.Router("/lotterydata/:size", &controllers.LotteryController{}, "get:LotteryData")
@@ -19,3 +19,4 @@ func Init() {
 	beego.Router("/newplan/", &controllers.LotteryController{}, "get:GetPlan")
 
 }
+
