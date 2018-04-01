@@ -295,11 +295,11 @@ func NewCalculatePut(numbers, tenNums []int) []int {
 	nums := make(map[int]int, 0)
 
 	for i, v := range tenNums {
-		nums[i] = v
+		nums[i+1] = v
 	}
 
 	for _, n := range numbers {
-		delete(nums, n-1)
+		delete(nums, n)
 	}
 
 	fiveNums := make([]int, 0)
@@ -307,37 +307,40 @@ func NewCalculatePut(numbers, tenNums []int) []int {
 	for _, v := range nums {
 		fiveNums = append(fiveNums, v)
 	}
+	fmt.Println(fiveNums)
 
-	for i, v := range fiveNums {
+	for i, v := range nums {
 		fiveMnums[i] = v
 	}
-
+	fmt.Println(fiveMnums)
 	sort.Ints(fiveNums)
 
 	selectNums := make([]int, 0)
 
 	for k, v := range fiveMnums {
 		if v == fiveNums[0] {
-			logs.Info("选择第1个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
+			fmt.Println("选择第1个号码是 %v", k)
+			selectNums = append(selectNums, k)
 			continue
 		}
 		if v == fiveNums[1] {
-			logs.Info("选择第2个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
+			fmt.Println("选择第2个号码是 %v", k)
+			selectNums = append(selectNums, k)
 			continue
 		}
 		if v == fiveNums[4] {
-			logs.Info("选择第3个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
+			fmt.Println("选择第3个号码是 %v", k)
+			selectNums = append(selectNums, k)
 			continue
 		}
 
 	}
 	sort.Ints(selectNums)
-	logs.Debug("本期新增三个号码 %v", selectNums)
+	fmt.Println("本期新增三个号码 %v", selectNums)
 	return selectNums
 }
+
+
 func GetDateData() {
 	dbconn := db.GetDB()
 	dd, err := dbconn.GetPutHistoryData()
