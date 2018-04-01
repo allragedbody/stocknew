@@ -22,6 +22,7 @@ var PuttoLottery []int
 var PuttoLotteryMax4 []int
 var MissDataLottery []int
 var LotterPlans []model.LotterPlan
+var DateData map[int]int
 
 var c *nettools.HttpClient
 
@@ -290,62 +291,63 @@ func CalculatePut(tenNums []int) []int {
 	return selectNums
 }
 
-func NewCalculatePut(tenNums []int) []int {
+func NewCalculatePut(numbers, tenNums []int) []int {
 	nums := make(map[int]int, 0)
+
 	for i, v := range tenNums {
 		nums[i] = v
 	}
-	sort.Ints(tenNums)
+
+	for _, n := range numbers {
+		delete(nums, n-1)
+	}
+
+	fiveNums := make([]int, 0)
+	fiveMnums := make(map[int]int, 0)
+	for _, v := range nums {
+		fiveNums = append(fiveNums, v)
+	}
+
+	for i, v := range fiveNums {
+		fiveMnums[i] = v
+	}
+
+	sort.Ints(fiveNums)
 
 	selectNums := make([]int, 0)
 
-	for k, v := range nums {
-		if v == tenNums[1] {
+	for k, v := range fiveMnums {
+		if v == fiveNums[0] {
 			logs.Info("选择第1个号码是 %v", k+1)
 			selectNums = append(selectNums, k+1)
 			continue
 		}
-		if v == tenNums[2] {
+		if v == fiveNums[1] {
 			logs.Info("选择第2个号码是 %v", k+1)
 			selectNums = append(selectNums, k+1)
 			continue
 		}
-		if v == tenNums[3] {
+		if v == fiveNums[4] {
 			logs.Info("选择第3个号码是 %v", k+1)
 			selectNums = append(selectNums, k+1)
 			continue
 		}
-		if v == tenNums[8] {
-			logs.Info("选择第4个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
-			continue
-		}
-		if v == tenNums[9] {
-			logs.Info("选择第5个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
-			continue
-		}
 
-		if v == tenNums[4] {
-			logs.Info("选择第6个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
-			continue
-		}
-		if v == tenNums[6] {
-			logs.Info("选择第6个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
-			continue
-		}
-		if v == tenNums[0] {
-			logs.Info("选择第6个号码是 %v", k+1)
-			selectNums = append(selectNums, k+1)
-			continue
-		}
 	}
 	sort.Ints(selectNums)
-	logs.Debug("new本期采用号码 %v", selectNums)
+	logs.Debug("本期新增三个号码 %v", selectNums)
 	return selectNums
 }
+func GetDateData() {
+	dbconn := db.GetDB()
+	dd, err := dbconn.GetPutHistoryData()
+	if err != nil {
+		logs.Debug("获取当天历史数据失败 %v", err)
+	}
+        DateData=dd
+        logs.Debug("历史数据是 %v",DateData)
+}
+
 
 func RestoreLotterResult(lps []model.LotterPlan) {
 	LotterPlans = lps

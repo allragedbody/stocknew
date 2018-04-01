@@ -62,13 +62,14 @@
 							<h2>αλγόριθμο.</h2>		
                                 <div id=missnumbers></div>
                                 <div id=putnumbers></div>
+                                <div id=statistc></div>
 
                             </div>
 					</article>
                                        <article class="hs-content" id="chapter4">
                                             <div class="hs-inner">
                                                         <h2>Σχέδιο2</h2>
-                                <div id=newgetplans></div>
+                                            <div id=newgetplans></div>
                                             </div>
                                         </article>
 
@@ -91,7 +92,10 @@
 var html = ""
 var misshtml = ""
 var puthtml = ""
+var newputhtml = ""
 var planhtml=""
+var newplanhtml=""
+var statistchtml=""
 	$.ajax({
       url: "/lotterydata/50",
       async: false,
@@ -192,53 +196,31 @@ $.ajax({
       type: "GET",
       dataType: "JSON",
       success:function(result){
-             planhtml += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
+             newplanhtml += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
                  $.each(result.reverse(), function(index, data){
-                  planhtml += "<div style=\"font-size: 10px ;\"></div>";
-                  planhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"-["+data.numberList+"]</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> -("+data.putTime+")</span>"
+                  newplanhtml += "<div style=\"font-size: 10px ;\"></div>";
+                  newplanhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"-["+data.numberList+"]</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> -("+data.putTime+")</span>"
                  if (index==0){
                      realtime = data.realPutTime
                  }
 
                   if (data.status=="等开"){
-                          planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-D</span>"
+                          newplanhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-D</span>"
                   }
                   if (data.status=="中"){
-                          planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-Z</span>"
+                          newplanhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-Z</span>"
                   }
                   if (data.status=="倍投"){
-                          planhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-B</span>"
+                          newplanhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-B</span>"
                   }
 
-                  planhtml += " <span style=\"font-size: 18px;\" class=\"tz_blueball\"> -["+data.createTime+"]</span>" ;
+                  newplanhtml += " <span style=\"font-size: 18px;\" class=\"tz_blueball\"> -["+data.createTime+"]</span>" ;
 
           });
-          planhtml += "<div style=\"font-size: 10px ;\"><p></p></div>";
-
-                  document.getElementById("newgetplans").innerHTML = (planhtml);
-
-      }
+          newplanhtml += "<div style=\"font-size: 10px ;\"><p></p></div>";
+          document.getElementById("newgetplans").innerHTML = (newplanhtml);
+         }
         });
-
-
-$.ajax({
-      url: "http://54.250.253.42:8888/putdata/",
-      async: false,
-      type: "GET",
-      dataType: "JSON",
-      success:function(result){
-             puthtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">P：</span>";
-                 $.each(result, function(index, data){
-
-                  puthtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> "+data+"</span>";
-          });
-          puthtml += "<div style=\"font-size: 20px ;\"></div>";
-                  document.getElementById("newputnumbers").innerHTML = (puthtml);
-
-      }
-        });
-
-
 
 	audio=document.getElementById("ttt");	
 	console.log(realtime)
@@ -246,7 +228,22 @@ $.ajax({
 	   	audio.onloadstart=audio.play();
 	}
 
-		</script>
+$.ajax({
+      url: "http://54.250.253.42:8888/getdatedata/",
+      async: false,
+      type: "GET",
+      dataType: "JSON",
+      success:function(result){
+                 $.each(result, function(index, data){
+                  statistchtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> ("+index+"次数:"+data+")  </span>";
+          });
+
+          document.getElementById("statistc").innerHTML = statistchtml ;
+         }
+        });
+
+
+	</script>
     </body>
 </html>
 

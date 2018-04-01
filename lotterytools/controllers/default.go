@@ -75,9 +75,18 @@ func (this *LotteryController) GetPlan() {
 	this.ServeJSON()
 }
 
+func (this *LotteryController) GetDateData() {
+	this.AllowCross() //允许跨域
+
+	this.Data["json"] = process.DateData
+	this.ServeJSON()
+}
+
 type BaseController struct {
 	beego.Controller
 }
+
+
 
 func (c *BaseController) Options() {
 	c.AllowCross() //允许跨域

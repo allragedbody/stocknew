@@ -309,6 +309,7 @@ var putTime int
 //}
 
 func caculateDataMax4() {
+	var isadd bool
 	lotterPlans := make([]model.LotterPlan, 0)
 
 	var lastmysqlplan int
@@ -358,10 +359,10 @@ func caculateDataMax4() {
 
 			logs.Info("第一次计算下注数据为 %v ", plan)
 			//存数据库
-			//			err := process.RestorePlan(plan)
-			//			if err != nil {
-			//				logs.Error("RestorePlanToDB [%v] err: %v", plan, err)
-			//			}
+			err := process.RestorePlan(plan)
+			if err != nil {
+				logs.Error("RestorePlanToDB [%v] err: %v", plan, err)
+			}
 			lotterPlans = append(lotterPlans, plan)
 		} else {
 			//是否已经变更期数
@@ -392,6 +393,7 @@ func caculateDataMax4() {
 						plan.PutTime = 1
 						plan.RealPutTime = 0
 						plan.Status = "等开"
+						isadd = false
 						plan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
 						process.PuttoLotteryMax4 = putdata
 						lotterPlans = append(lotterPlans, plan)
@@ -415,11 +417,14 @@ func caculateDataMax4() {
 					nextPeriodNum, _ := strconv.Atoi(data[0][0])
 					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
 					lotterPlans = lotterPlans[0 : l-1]
-
 					if lastplan.PutTime > 3 {
-						newputdata := process.NewCalculatePut(missdata)
+						newputdata := process.NewCalculatePut(lastplan.NumberList, missdata)
 						lpn := lastplan.NumberList
-						lastplan.NumberList = getNewPlan(lpn, newputdata)
+						if !isadd {
+							lastplan.NumberList = getNewPlan(lpn, newputdata)
+							isadd = true
+						}
+
 						process.PuttoLotteryMax4 = lastplan.NumberList
 					} else {
 						process.PuttoLotteryMax4 = lastplan.NumberList
@@ -431,10 +436,10 @@ func caculateDataMax4() {
 					lotterPlans = append(lotterPlans, lastplan)
 					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
 					//存数据库
-					//					err := process.RestorePlan(lastplan)
-					//					if err != nil {
-					//						logs.Error("RestorePlanToDB [%v] err: %v", lastplan, err)
-					//					}
+					err := process.RestorePlan(lastplan)
+					if err != nil {
+						logs.Error("RestorePlanToDB [%v] err: %v", lastplan, err)
+					}
 				}
 			}
 		}
@@ -446,6 +451,7 @@ func caculateDataMax4() {
 
 		lastmysqlplan, _ = strconv.Atoi(lotterPlans[n-1].CurrentPierod)
 		process.RestoreLotterResult(lotterPlans)
+       		process.GetDateData()
 	}
 }
 
