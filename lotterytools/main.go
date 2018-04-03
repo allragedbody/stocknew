@@ -343,6 +343,11 @@ func caculateDataMax4() {
 
 		process.MissDataLottery = missdata
 		logs.Info("计算遗漏数据为 %v", process.MissDataLottery)
+		//存数据库
+		err = process.RestoreMissData(data[0][0], missdata)
+		if err != nil {
+			logs.Error("RestoreMissData [%v-%v] err: %v", data[0][0], missdata, err)
+		}
 
 		if len(lotterPlans) == 0 {
 			putdata := process.CalculatePut(missdata)
@@ -451,7 +456,7 @@ func caculateDataMax4() {
 
 		lastmysqlplan, _ = strconv.Atoi(lotterPlans[n-1].CurrentPierod)
 		process.RestoreLotterResult(lotterPlans)
-       		process.GetDateData()
+		process.GetDateData()
 	}
 }
 
@@ -475,4 +480,3 @@ func getNewPlan(a, b []int) []int {
 	}
 	return l
 }
-

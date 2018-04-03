@@ -42,3 +42,6 @@ root
 
 pkpk
 @Dyf19840218@
+
+grant all privileges on pkpk.* to 'pkpk'@'127.0.0.1' identified by 'Dyf19840218@' with grant option;
+flush privileges;

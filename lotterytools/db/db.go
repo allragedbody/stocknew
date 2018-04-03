@@ -12,10 +12,10 @@ import (
 )
 
 var (
-        dbhostsip  = "127.0.0.1:3306" //IP地址
-        dbusername = "pkpk"           //用户名
-        dbpassword = "@Dyf19840218@"               //密码
-        dbname     = "pkpk"        //数据库名
+	dbhostsip  = "127.0.0.1:3306" //IP地址
+	dbusername = "pkpk"           //用户名
+	dbpassword = "@Dyf19840218@"  //密码
+	dbname     = "pkpk"           //数据库名
 
 )
 
@@ -38,6 +38,34 @@ func Init() error {
 
 func GetDB() *DBClient {
 	return dbconn
+}
+
+func (dc *DBClient) RestoreMissDataToDB(c string, m []int) error {
+	tx, err := dc.Conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	insertstr := fmt.Sprintf("insert into PK10Miss(period,number1,number2,number3,number4,number5,number6,number7,number8,number9,number10) values ('%v',%v,%v,%v,%v,%v,%v,%v,%v,%v,%v)", c, m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9])
+	fmt.Printf(insertstr)
+	stm, err := tx.Prepare(insertstr)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	_, err = stm.Exec()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	//	dc.Conn.Close()
+	return nil
+
 }
 
 func (dc *DBClient) RestorePlanToDB(cp string, nl []int, pt int, rp int, sts string, gr bool, ct string) error {

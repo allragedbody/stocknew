@@ -55,6 +55,29 @@ func (this *LotteryController) LotteryData() {
 	//	this.Ctx.WriteString(info)
 }
 
+func (this *LotteryController) MissDataList() {
+	this.AllowCross() //允许跨域
+	rsp := &Response{}
+
+	size, err := this.GetInt(":size")
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
+	}
+	dbconn := db.GetDB()
+	data, err := dbconn.GetMissData(0, size)
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
+	}
+	rsp.HistoryDatas = data
+
+	this.Data["json"] = rsp
+
+	this.ServeJSON()
+	//	this.Ctx.WriteString(info)
+}
+
 func (this *LotteryController) MissData() {
 	this.AllowCross() //允许跨域
 
@@ -86,8 +109,6 @@ type BaseController struct {
 	beego.Controller
 }
 
-
-
 func (c *BaseController) Options() {
 	c.AllowCross() //允许跨域
 	c.Data["json"] = map[string]interface{}{"status": 200, "message": "ok", "moreinfo": ""}
@@ -111,4 +132,3 @@ func (c *LotteryController) AllowCross() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Credentials", "true")
 	c.Ctx.ResponseWriter.Header().Set("content-type", "application/json") //返回数据格式是json
 }
-

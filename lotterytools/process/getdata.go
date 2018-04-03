@@ -84,6 +84,15 @@ func RestorePlan(lp model.LotterPlan) error {
 	return nil
 }
 
+func RestoreMissData(c string, m []int) error {
+	dbconn := db.GetDB()
+	err := dbconn.RestoreMissDataToDB(c, m)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 ////http://hq.sinajs.cn/list=sz000158,sh601766
 //func convertToString(src string, srcCode string, tagCode string) string {
 //	srcCoder := mahonia.NewDecoder(srcCode)
@@ -340,19 +349,16 @@ func NewCalculatePut(numbers, tenNums []int) []int {
 	return selectNums
 }
 
-
 func GetDateData() {
 	dbconn := db.GetDB()
 	dd, err := dbconn.GetPutHistoryData()
 	if err != nil {
 		logs.Debug("获取当天历史数据失败 %v", err)
 	}
-        DateData=dd
-        logs.Debug("历史数据是 %v",DateData)
+	DateData = dd
+	logs.Debug("历史数据是 %v", DateData)
 }
-
 
 func RestoreLotterResult(lps []model.LotterPlan) {
 	LotterPlans = lps
 }
-
