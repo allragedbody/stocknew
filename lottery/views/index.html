@@ -60,9 +60,11 @@
 					<article class="hs-content" id="chapter3">
 					    <div class="hs-inner">
 							<h2>αλγόριθμο.</h2>		
-                                <div id=missnumbers></div>
                                 <div id=putnumbers></div>
                                 <div id=statistc></div>
+                                <div></div>
+                                <div>-------------------------------------------------------------------------------</div>
+                                <div id=missnumbers></div>
 
                             </div>
 					</article>
@@ -120,22 +122,29 @@ var statistchtml=""
       }
   	});
 
-
 $.ajax({
-      url: "/missdata/",
+      url: "http://54.250.253.42:8888/missdatalist/180",
       async: false,
       type: "GET",
       dataType: "JSON",
       success:function(result){
-		 misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">M：|</span>";
-		 $.each(result, function(index, data){
-	
-		  misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data+"|</span>";
-          });	
-          misshtml += "<div style=\"font-size: 20px ;\"></div>"; 	
-		  document.getElementById("missnumbers").innerHTML = (misshtml);
+          $.each(result.historydatas, function(index, data){
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[0]+"---|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[1]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[2]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[3]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[4]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[5]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[6]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[7]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[8]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[9]+"|</span>";
+          misshtml += " <span style=\"font-size: 20px ;\" class=\"tz_blueball\">"+data[10]+"|</span>";
+          misshtml += "<div style=\"font-size: 20px ;\"></div>";
+          });
+                  document.getElementById("missnumbers").innerHTML = (misshtml);
       }
-  	});
+        });
 
 $.ajax({
       url: "/putdata/",
