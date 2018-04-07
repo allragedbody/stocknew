@@ -142,7 +142,7 @@ var putTime int
 //						plan.PutTime = 1
 //						plan.RealPutTime = 0
 //						plan.Status = "等开"
-//						plan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
+//						plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 //						process.PuttoLottery = putdata
 //						lotterPlans = append(lotterPlans, plan)
 //						logs.Info("中奖了，计算下注数据为 %v ", plan)
@@ -269,7 +269,7 @@ var putTime int
 
 //					}
 
-//					lastplan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
+//					lastplan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 //					if lastplan.RealPutTime > 0 {
 //						if sendtime > 1 {
 //							logs.Info("超过1次不再提醒")
@@ -312,6 +312,7 @@ func caculateDataMax4() {
 	var isadd bool
 	lotterPlans := make([]model.LotterPlan, 0)
 
+	sendtime := 0
 	var lastmysqlplan int
 
 	for {
@@ -340,6 +341,23 @@ func caculateDataMax4() {
 		missdata = append(missdata, alldata["8"].MissTime)
 		missdata = append(missdata, alldata["9"].MissTime)
 		missdata = append(missdata, alldata["10"].MissTime)
+
+		if fiveTenAndOneNine(missdata) || sixTen(missdata) {
+		    process.RestoreImportantMiss(missdata)
+                            if sendtime > 2 {
+                                logs.Info("超过2次不再提醒")
+                            } else {
+                                logs.Info("发短信给企业号 内容为 %v ", missdata)
+                                err := process.SendWeChat(missdata)
+                                if err != nil {
+                                    logs.Info("发送计划失败： %v ", err)
+                                } else {
+                                    sendtime += 1
+                                }
+                            }
+                        } else {
+                            sendtime = 0
+                        }
 
 		process.MissDataLottery = missdata
 		logs.Info("计算遗漏数据为 %v", process.MissDataLottery)
@@ -399,7 +417,7 @@ func caculateDataMax4() {
 						plan.RealPutTime = 0
 						plan.Status = "等开"
 						isadd = false
-						plan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
+						plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 						process.PuttoLotteryMax4 = putdata
 						lotterPlans = append(lotterPlans, plan)
 						logs.Info("中奖了，计算下注数据为 %v ", plan)
@@ -417,6 +435,7 @@ func caculateDataMax4() {
 					if lastplan.PutTime > 2 {
 						lastplan.RealPutTime = lastplan.PutTime - 2
 					}
+
 
 					lastplan.Status = "倍投"
 					nextPeriodNum, _ := strconv.Atoi(data[0][0])
@@ -436,7 +455,7 @@ func caculateDataMax4() {
 
 					}
 
-					lastplan.CreateTime = time.Now().UTC().Format("2006-01-02 15:04:05")
+					lastplan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 
 					lotterPlans = append(lotterPlans, lastplan)
 					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
@@ -479,4 +498,36 @@ func getNewPlan(a, b []int) []int {
 		l = append(l, k)
 	}
 	return l
+}
+
+
+func fiveTenAndOneNine(list []int) bool {
+	n := 0
+	for _, i := range list {
+		if i > 9 {
+			n += 1
+		}
+	}
+	if n > 4 {
+		for _, j := range list {
+			if j == 9 {
+				return true
+			}
+		}
+		return false
+	}
+	return false
+}
+
+func sixTen(list []int) bool {
+	n := 0
+	for _, i := range list {
+		if i > 9 {
+			n += 1
+		}
+	}
+	if n > 5 {
+		return true
+	}
+	return false
 }

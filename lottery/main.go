@@ -48,10 +48,6 @@ func main() {
 	logs.Info("開始加載數據。")
 	go reloadLotteryData()
 	go caculateData()
-beego.NSNamespace("/*",
-            //Options用于跨域复杂请求预检
-            beego.NSRouter("/*", &v1.BaseController{}, "options:Options"),
-        ),
 	routers.Init()
 	beego.SetStaticPath("/views", "views")
 	beego.Run()
@@ -101,7 +97,6 @@ var putTime int
 
 func caculateData() {
 	lotterPlans := make([]model.LotterPlan, 0)
-	sendtime := 0
 	var lastmysqlplan int
 	for {
 		time.Sleep(time.Second * 10)
@@ -205,23 +200,6 @@ func caculateData() {
 					lotterPlans = lotterPlans[0 : l-1]
 					process.PuttoLottery = lastplan.NumberList
 					lastplan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
-					if lastplan.RealPutTime > 0 {
-						if sendtime > 3 {
-							logs.Info("超过3次不再提醒")
-						} else {
-							logs.Info("发短信给企业号 内容为 %v ", lastplan)
-							err := process.SendWeChat(lastplan)
-							if err != nil {
-								logs.Info("发送计划失败： %v ", err)
-							} else {
-								sendtime += 1
-							}
-						}
-
-					} else {
-						sendtime = 0
-					}
-
 					lotterPlans = append(lotterPlans, lastplan)
 					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
 					//存数据库

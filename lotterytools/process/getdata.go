@@ -23,6 +23,7 @@ var PuttoLotteryMax4 []int
 var MissDataLottery []int
 var LotterPlans []model.LotterPlan
 var DateData map[int]int
+var ImportantMiss []int
 
 var c *nettools.HttpClient
 
@@ -32,7 +33,15 @@ func Init() {
 
 //{"status":{"code":"403","text":"请求超频,违规3次"}}
 
-func SendWeChat(lotteryPlan model.LotterPlan) error {
+func RestoreImportantMiss(ims []int) {
+	if ImportantMiss == nil {
+		ImportantMiss = make([]int,10)
+	} else {
+		ImportantMiss = ims
+	}
+}
+
+func SendWeChat(misslists []int) error {
 	tkurl := "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=ww3bc839d9990b1e89&corpsecret=eF05WFY7SRfK1hpjjb3UxSzGZnFnyREtKK47PvMloN8"
 
 	tkbody, err := c.HttpDoGet(tkurl)
@@ -59,7 +68,7 @@ func SendWeChat(lotteryPlan model.LotterPlan) error {
 	pushData := &model.PushData{}
 	now := time.Now().UTC().Format("2006-01-02 15:04:05")
 
-	localtext := fmt.Sprintf("(%v)(%v)(%v)(%v)", lotteryPlan.CurrentPierod, lotteryPlan.NumberList, lotteryPlan.RealPutTime, now)
+	localtext := fmt.Sprintf("(%v)-(%v)", misslists, now)
 	pushData.Touser = "@all"
 	pushData.Msgtype = "text"
 	pushData.Agentid = 1000002
@@ -337,15 +346,10 @@ func NewCalculatePut(numbers, tenNums []int) []int {
 			selectNums = append(selectNums, k)
 			continue
 		}
-		if v == fiveNums[4] {
-			fmt.Println("选择第3个号码是 %v", k)
-			selectNums = append(selectNums, k)
-			continue
-		}
 
 	}
 	sort.Ints(selectNums)
-	fmt.Println("本期新增三个号码 %v", selectNums)
+	fmt.Println("本期新增2个号码 %v", selectNums)
 	return selectNums
 }
 

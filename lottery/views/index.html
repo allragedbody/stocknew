@@ -32,8 +32,8 @@
 				</div>
 				<nav>
 					<a href="#chapter1"><span>δεδομένα</span></a>
-					<a href="#chapter2"><span>Σχέδιο</span></a>
-					<a href="#chapter3"><span>αλγόριθμο.</span></a>
+					<a href="#chapter2"><span>αλγόριθμο.</span></a>
+					<a href="#chapter3"><span>Σχέδιο</span></a>
 					<a href="#chapter4"><span>Σχέδιο2</span></a>
 				</nav>
 			</aside>
@@ -48,26 +48,27 @@
 					</article>
 					<article class="hs-content" id="chapter2">
 					    <div class="hs-inner">
-							<h2>Σχέδιο</h2>
-                                <div id=getplans></div>
-                                <div>
-                                    <audio id="ttt">
-                                    <source src="/views/ttt.mp3" type="audio/mp3" >
-                                    </audio>
-                                </div>
-					    </div>
-					</article>
-					<article class="hs-content" id="chapter3">
-					    <div class="hs-inner">
 							<h2>αλγόριθμο.</h2>		
+                                <div id=importantmiss></div>
                                 <div id=putnumbers></div>
-                                <div id=statistc></div>
                                 <div></div>
                                 <div>-------------------------------------------------------------------------------</div>
                                 <div id=missnumbers></div>
 
                             </div>
 					</article>
+                                   <article class="hs-content" id="chapter3">
+                                            <div class="hs-inner">
+                                                        <h2>Σχέδιο</h2>
+                                <div id=getplans></div>
+                                <div>
+                                    <audio id="ttt">
+                                    <source src="/views/ttt.mp3" type="audio/mp3" >
+                                    </audio>
+                                </div>
+                                            </div>
+                                        </article>
+
                                        <article class="hs-content" id="chapter4">
                                             <div class="hs-inner">
                                                         <h2>Σχέδιο2</h2>
@@ -97,8 +98,9 @@ var puthtml = ""
 var newputhtml = ""
 var planhtml=""
 var newplanhtml=""
-var statistchtml=""
-	$.ajax({
+var importanthtml=""
+
+$.ajax({
       url: "/lotterydata/50",
       async: false,
       type: "GET",
@@ -120,7 +122,7 @@ var statistchtml=""
           });	
 		  document.getElementById("loadnumbers").innerHTML = (html);
       }
-  	});
+ });
 
 $.ajax({
       url: "http://54.250.253.42:8888/missdatalist/180",
@@ -129,22 +131,29 @@ $.ajax({
       dataType: "JSON",
       success:function(result){
           $.each(result.historydatas, function(index, data){
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[0]+"---|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[1]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[2]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[3]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[4]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[5]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[6]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[7]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[8]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">"+data[9]+"|</span>";
-          misshtml += " <span style=\"font-size: 20px ;\" class=\"tz_blueball\">"+data[10]+"|</span>";
+            misshtml += " <span style=\"font-size: 16px;\" class=\"tz_blueball\">"+data[0]+"-|</span>";
+            for (var i = 1; i < 11; i++) {
+              if (data[i]==9){
+                  misshtml += " <span style=\"font-size: 16px; color:#FF8C00\" class=\"tz_blueball\">"+data[i]+"</span>";
+              }else{
+                  if (data[i]>9){
+                       misshtml += " <span style=\"font-size: 16px; color:red\" class=\"tz_blueball\">"+data[i]+"</span>";
+                  }else{
+                      if (data[i]<6){
+                          misshtml += " <span style=\"font-size: 16px; color:green\" class=\"tz_blueball\">"+data[i]+"</span>";
+                      }else{
+                      misshtml += " <span style=\"font-size: 16px;\" class=\"tz_blueball\">"+data[i]+"</span>";
+                  }
+	      }
+            }
+            misshtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">|</span>";
+          }
+
           misshtml += "<div style=\"font-size: 20px ;\"></div>";
-          });
-                  document.getElementById("missnumbers").innerHTML = (misshtml);
+         });
+          document.getElementById("missnumbers").innerHTML = (misshtml);
       }
-        });
+});
 
 $.ajax({
       url: "/putdata/",
@@ -162,6 +171,21 @@ $.ajax({
 		
       }
   	});
+
+$.ajax({
+      url: "http://54.250.253.42:8888/importantmiss/",
+      async: false,
+      type: "GET",
+      dataType: "JSON",
+      success:function(result){
+          importanthtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">重要遗漏：</span>";
+          importanthtml += " <span style=\"font-size: 18px;\" class=\"tz_blueball\"> ("+result+")  </span>";
+          importanthtml += "<div style=\"font-size: 20px ;\"></div>";
+                  document.getElementById("importantmiss").innerHTML = (importanthtml);
+
+      }
+        });
+
 
 var realtime=0
 
@@ -236,21 +260,6 @@ $.ajax({
 	if (realtime>0){
 	   	audio.onloadstart=audio.play();
 	}
-
-$.ajax({
-      url: "http://54.250.253.42:8888/getdatedata/",
-      async: false,
-      type: "GET",
-      dataType: "JSON",
-      success:function(result){
-                 $.each(result, function(index, data){
-                  statistchtml += " <span style=\"font-size: 24px;\" class=\"tz_blueball\"> ("+index+"次数:"+data+")  </span>";
-          });
-
-          document.getElementById("statistc").innerHTML = statistchtml ;
-         }
-        });
-
 
 	</script>
     </body>

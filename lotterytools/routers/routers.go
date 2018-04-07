@@ -18,6 +18,7 @@ func Init() {
 	beego.Router("/missdata/", &controllers.LotteryController{}, "get:MissData")
 	beego.Router("/putdata/", &controllers.LotteryController{}, "get:PutData")
 	beego.Router("/newplan/", &controllers.LotteryController{}, "get:GetPlan")
+	beego.Router("/importantmiss/", &controllers.LotteryController{}, "get:ImportantMiss")
 	beego.Router("/getdatedata/", &controllers.LotteryController{}, "get:GetDateData")
 
 }
