@@ -112,6 +112,24 @@ func (this *LotteryController) ImportantMiss() {
         this.ServeJSON()
 }
 
+func (this *LotteryController) ModeStatistic() {
+        this.AllowCross() //允许跨域
+        size, err := this.GetInt(":size")
+        if err != nil {
+                this.Ctx.WriteString(err.Error())
+                return
+        }
+
+        err = process.NextNumberStatistics(size)
+        if err != nil {
+         this.Ctx.WriteString(err.Error())
+                return
+
+         }
+ 
+        this.Data["json"] = process.ModeStatistic
+        this.ServeJSON()
+}
 
 type BaseController struct {
 	beego.Controller

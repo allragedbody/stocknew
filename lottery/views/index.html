@@ -228,42 +228,24 @@ $.ajax({
   	});
 
 $.ajax({
-      url: "http://54.250.253.42:8888/newplan/",
+      url: "http://54.250.253.42:8888/modestatistic/30000",
       async: false,
       type: "GET",
       dataType: "JSON",
       success:function(result){
              newplanhtml += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
-                 $.each(result.reverse(), function(index, data){
+                 $.each(result, function(index, data){
                   newplanhtml += "<div style=\"font-size: 10px ;\"></div>";
-                  newplanhtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\"> "+data.currentPierod+"-["+data.numberList+"]</span>"+" <span style=\"font-size: 20px;\" class=\"tz_blueball\"> -("+data.putTime+")</span>"
-                 if (index==0){
-                     realtime = data.realPutTime
-                 }
-
-                  if (data.status=="等开"){
-                          newplanhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-D</span>"
-                  }
-                  if (data.status=="中"){
-                          newplanhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-Z</span>"
-                  }
-                  if (data.status=="倍投"){
-                          newplanhtml += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-B</span>"
-                  }
-
-                  newplanhtml += " <span style=\"font-size: 18px;\" class=\"tz_blueball\"> -["+data.createTime+"]</span>" ;
-
+                  var last=JSON.stringify(data);
+                  newplanhtml += " <span style=\"font-size: 12px;\" class=\"tz_blueball\">("+index+"后面)</span>"
+                  newplanhtml += " <br>"
+                  newplanhtml += " <span style=\"font-size: 12px;\" class=\"tz_blueball\">("+last+")</span>"
           });
-          newplanhtml += "<div style=\"font-size: 10px ;\"><p></p></div>";
+                  newplanhtml += " <br>"
+
           document.getElementById("newgetplans").innerHTML = (newplanhtml);
          }
         });
-
-	audio=document.getElementById("ttt");	
-	console.log(realtime)
-	if (realtime>0){
-	   	audio.onloadstart=audio.play();
-	}
 
 	</script>
     </body>

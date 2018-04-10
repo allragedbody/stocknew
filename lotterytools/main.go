@@ -325,11 +325,11 @@ func caculateDataMax4() {
 			continue
 		}
 
-		err = process.NextNumberStatistics(10000)
-		if err != nil {
-			logs.Error("统计历史下一个数字失败", err)
-			continue
-		}
+//		err = process.NextNumberStatistics(20)
+//		if err != nil {
+//			logs.Error("统计历史下一个数字失败", err)
+//			continue
+//		}
 
 		alldata, err := process.CalculateMiss(data)
 		if err != nil {

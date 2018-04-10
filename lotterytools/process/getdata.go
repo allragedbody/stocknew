@@ -24,6 +24,7 @@ var MissDataLottery []int
 var LotterPlans []model.LotterPlan
 var DateData map[int]int
 var ImportantMiss []int
+var ModeStatistic map[string]map[string]int
 
 var c *nettools.HttpClient
 
@@ -130,18 +131,27 @@ func NextNumberStatistics(size int) error {
 	ns := &numberStatistics{}
 	ns.numbers = make(map[string]map[string]int, 0)
 
-	for i := 1; i < 10; i++ {
+	for i := 1; i < 11; i++ {
 		ns.numbers[strconv.Itoa(i)] = make(map[string]int, 0)
-		for j := 1; j < 10; j++ {
+		for j := 1; j < 11; j++ {
 			ns.numbers[strconv.Itoa(i)][strconv.Itoa(j)] = 0
 		}
 	}
 	dbconn := db.GetDB()
-	datas, err := dbconn.GetLotterDataPositive(0, size)
+	datas, err := dbconn.GetLotterData(0, size)
 	if err != nil {
 		return err
 	}
-	for index, data := range datas {
+
+	data1 := make([][]string, 0)
+	lendata := len(datas)
+
+	for i := lendata - 1; i >= 0; i-- {
+		data1 = append(data1, datas[i])
+	}
+
+
+	for index, data := range data1 {
 		if index == 0 {
 			ns.cur = data[1]
 		} else {
@@ -184,7 +194,7 @@ func NextNumberStatistics(size int) error {
 			ns.cur = data[1]
 		}
 	}
-	fmt.Println(ns)
+        RestoreModeStatisticResult(ns.numbers)
 	return nil
 }
 
@@ -194,7 +204,7 @@ func nextHitMode(number string, mode string, rule string) bool {
 			return true
 		}
 	} else {
-		if rule == "oddeven" {
+		if rule == "odd" {
 			if number == "1" || number == "3" || number == "5" || number == "7" || number == "9" {
 				return true
 			}
@@ -452,3 +462,10 @@ func GetDateData() {
 func RestoreLotterResult(lps []model.LotterPlan) {
 	LotterPlans = lps
 }
+
+
+
+func RestoreModeStatisticResult(ms map[string]map[string]int) {
+        ModeStatistic = ms
+}
+
