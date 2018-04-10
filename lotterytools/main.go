@@ -343,22 +343,24 @@ func caculateDataMax4() {
 		missdata = append(missdata, alldata["10"].MissTime)
 
 		if fiveTenAndOneNine(missdata) || sixTen(missdata) {
-		    process.RestoreImportantMiss(missdata)
-                            if sendtime > 2 {
-                                logs.Info("超过2次不再提醒")
-                            } else {
-                                logs.Info("发短信给企业号 内容为 %v ", missdata)
-                                err := process.SendWeChat(missdata)
-                                if err != nil {
-                                    logs.Info("发送计划失败： %v ", err)
-                                } else {
-                                    sendtime += 1
-                                }
-                            }
-                        } else {
-                            sendtime = 0
-                        }
-
+			process.RestoreImportantMiss(missdata)
+			if sendtime > 2 {
+				logs.Info("超过2次不再提醒")
+			} else {
+				logs.Info("发短信给企业号 内容为 %v ", missdata)
+				err := process.SendWeChat(missdata)
+				if err != nil {
+					logs.Info("发送计划失败： %v ", err)
+				} else {
+					sendtime += 1
+				}
+			}
+		} else {
+			tmpdata := make([]int, 10)
+			process.RestoreImportantMiss(tmpdata)
+			sendtime = 0
+		}
+		
 		process.MissDataLottery = missdata
 		logs.Info("计算遗漏数据为 %v", process.MissDataLottery)
 		//存数据库

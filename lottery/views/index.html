@@ -140,7 +140,11 @@ $.ajax({
                        misshtml += " <span style=\"font-size: 16px; color:red\" class=\"tz_blueball\">"+data[i]+"</span>";
                   }else{
                       if (data[i]<6){
-                          misshtml += " <span style=\"font-size: 16px; color:green\" class=\"tz_blueball\">"+data[i]+"</span>";
+                          if (data[i]==0){
+                              misshtml += " <span style=\"font-size: 16px; color:blue\" class=\"tz_blueball\">"+data[i]+"</span>";
+                          }else{
+                              misshtml += " <span style=\"font-size: 16px; color:green\" class=\"tz_blueball\">"+data[i]+"</span>";
+                          }
                       }else{
                       misshtml += " <span style=\"font-size: 16px;\" class=\"tz_blueball\">"+data[i]+"</span>";
                   }
@@ -179,7 +183,7 @@ $.ajax({
       dataType: "JSON",
       success:function(result){
           importanthtml += " <span style=\"font-size: 20px;\" class=\"tz_blueball\">重要遗漏：</span>";
-          importanthtml += " <span style=\"font-size: 18px;\" class=\"tz_blueball\"> ("+result+")  </span>";
+          importanthtml += " <span style=\"font-size: 22px;; color:red\" class=\"tz_blueball\"> ("+result+")  </span>";
           importanthtml += "<div style=\"font-size: 20px ;\"></div>";
                   document.getElementById("importantmiss").innerHTML = (importanthtml);
 
