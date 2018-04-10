@@ -150,6 +150,75 @@ func NextNumberStatistics(size int) error {
 		data1 = append(data1, datas[i])
 	}
 
+	for index, data := range data1 {
+		if index == 0 {
+			ns.cur = data[1]
+		} else {
+			if nextHitMode(data[1], "number", "1") {
+				ns.numbers[ns.cur]["1"] += 1
+			}
+			if nextHitMode(data[1], "number", "2") {
+				ns.numbers[ns.cur]["2"] += 1
+			}
+			if nextHitMode(data[1], "number", "3") {
+				ns.numbers[ns.cur]["3"] += 1
+			}
+			if nextHitMode(data[1], "number", "4") {
+				ns.numbers[ns.cur]["4"] += 1
+			}
+			if nextHitMode(data[1], "number", "5") {
+				ns.numbers[ns.cur]["5"] += 1
+			}
+			if nextHitMode(data[1], "number", "6") {
+				ns.numbers[ns.cur]["6"] += 1
+			}
+			if nextHitMode(data[1], "number", "7") {
+				ns.numbers[ns.cur]["7"] += 1
+			}
+			if nextHitMode(data[1], "number", "8") {
+				ns.numbers[ns.cur]["8"] += 1
+			}
+			if nextHitMode(data[1], "number", "9") {
+				ns.numbers[ns.cur]["9"] += 1
+			}
+			if nextHitMode(data[1], "number", "10") {
+				ns.numbers[ns.cur]["10"] += 1
+			}
+			if nextHitMode(data[1], "oddeven", "odd") {
+				ns.numbers[ns.cur]["odd"] += 1
+			}
+			if nextHitMode(data[1], "oddeven", "Even") {
+				ns.numbers[ns.cur]["even"] += 1
+			}
+			ns.cur = data[1]
+		}
+	}
+	RestoreModeStatisticResult(ns.numbers)
+	return nil
+}
+
+func NextNumberStatisticsSelf(size int) (map[string]map[string]int, error) {
+	ns := &numberStatistics{}
+	ns.numbers = make(map[string]map[string]int, 0)
+
+	for i := 1; i < 11; i++ {
+		ns.numbers[strconv.Itoa(i)] = make(map[string]int, 0)
+		for j := 1; j < 11; j++ {
+			ns.numbers[strconv.Itoa(i)][strconv.Itoa(j)] = 0
+		}
+	}
+	dbconn := db.GetDB()
+	datas, err := dbconn.GetLotterData(0, size)
+	if err != nil {
+		return ns.numbers, err
+	}
+
+	data1 := make([][]string, 0)
+	lendata := len(datas)
+
+	for i := lendata - 1; i >= 0; i-- {
+		data1 = append(data1, datas[i])
+	}
 
 	for index, data := range data1 {
 		if index == 0 {
@@ -194,8 +263,7 @@ func NextNumberStatistics(size int) error {
 			ns.cur = data[1]
 		}
 	}
-        RestoreModeStatisticResult(ns.numbers)
-	return nil
+	return ns.numbers, nil
 }
 
 func nextHitMode(number string, mode string, rule string) bool {
@@ -449,6 +517,46 @@ func NewCalculatePut(numbers, tenNums []int) []int {
 	return selectNums
 }
 
+// A data structure to hold a key/value pair.
+type Pair struct {
+	Key   string
+	Value int
+}
+
+// A slice of Pairs that implements sort.Interface to sort by Value.
+type PairList []Pair
+
+func (p PairList) Swap(i, j int)      { p[i], p[j] = p[j], p[i] }
+func (p PairList) Len() int           { return len(p) }
+func (p PairList) Less(i, j int) bool { return p[i].Value < p[j].Value }
+
+// A function to turn a map into a PairList, then sort and return it.
+func sortMapByValue(m map[string]int) PairList {
+	p := make(PairList, len(m))
+	i := 0
+	for k, v := range m {
+		p[i] = Pair{k, v}
+	}
+	sort.Sort(p)
+	return p
+}
+
+func CalculatePutByHis(cur string, his map[string]map[string]int) []int {
+	v := his[cur]
+	p := sortMapByValue(v)
+
+	selectNums := make([]int, 0)
+
+	for i := 0; i < 5; i++ {
+		n, _ := strconv.Atoi(p[i].Key)
+		selectNums = append(selectNums, n)
+	}
+
+	sort.Ints(selectNums)
+	logs.Debug("本期采用号码 %v", selectNums)
+	return selectNums
+}
+
 func GetDateData() {
 	dbconn := db.GetDB()
 	dd, err := dbconn.GetPutHistoryData()
@@ -463,9 +571,6 @@ func RestoreLotterResult(lps []model.LotterPlan) {
 	LotterPlans = lps
 }
 
-
-
 func RestoreModeStatisticResult(ms map[string]map[string]int) {
-        ModeStatistic = ms
+	ModeStatistic = ms
 }
-

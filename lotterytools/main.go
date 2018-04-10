@@ -309,7 +309,6 @@ var putTime int
 //}
 
 func caculateDataMax4() {
-	var isadd bool
 	lotterPlans := make([]model.LotterPlan, 0)
 
 	sendtime := 0
@@ -325,11 +324,11 @@ func caculateDataMax4() {
 			continue
 		}
 
-//		err = process.NextNumberStatistics(20)
-//		if err != nil {
-//			logs.Error("统计历史下一个数字失败", err)
-//			continue
-//		}
+		//		err = process.NextNumberStatistics(20)
+		//		if err != nil {
+		//			logs.Error("统计历史下一个数字失败", err)
+		//			continue
+		//		}
 
 		alldata, err := process.CalculateMiss(data)
 		if err != nil {
@@ -375,8 +374,17 @@ func caculateDataMax4() {
 			logs.Error("RestoreMissData [%v-%v] err: %v", data[0][0], missdata, err)
 		}
 
+		nnss, err := process.NextNumberStatisticsSelf(1000)
+		if err != nil {
+			logs.Error("NextNumberStatisticsSelf err: %v", err)
+			continue
+		}
+		if len(nnss) == 0 {
+			continue
+		}
+
 		if len(lotterPlans) == 0 {
-			putdata := process.CalculatePut(missdata)
+			putdata := process.CalculatePutByHis(data[0][1], nnss)
 			plan := model.LotterPlan{}
 			nextPeriodNum, _ := strconv.Atoi(data[0][0])
 			plan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
@@ -412,10 +420,9 @@ func caculateDataMax4() {
 					if rewardNum == i {
 						lastplan.GetReward = true
 						lastplan.Status = "中"
-
 						lotterPlans = lotterPlans[0 : l-1]
 						lotterPlans = append(lotterPlans, lastplan)
-						putdata := process.CalculatePut(missdata)
+						putdata := process.CalculatePutByHis(data[0][1], nnss)
 						plan := model.LotterPlan{}
 						nextPeriodNum, _ := strconv.Atoi(data[0][0])
 						plan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
@@ -424,7 +431,6 @@ func caculateDataMax4() {
 						plan.PutTime = 1
 						plan.RealPutTime = 0
 						plan.Status = "等开"
-						isadd = false
 						plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
 						process.PuttoLotteryMax4 = putdata
 						lotterPlans = append(lotterPlans, plan)
@@ -444,32 +450,27 @@ func caculateDataMax4() {
 						lastplan.RealPutTime = lastplan.PutTime - 2
 					}
 
-					lastplan.Status = "倍投"
-					nextPeriodNum, _ := strconv.Atoi(data[0][0])
-					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
+					lastplan.Status = "不中"
 					lotterPlans = lotterPlans[0 : l-1]
-					if lastplan.PutTime > 3 {
-						newputdata := process.NewCalculatePut(lastplan.NumberList, missdata)
-						lpn := lastplan.NumberList
-						if !isadd {
-							lastplan.NumberList = getNewPlan(lpn, newputdata)
-							isadd = true
-						}
-
-						process.PuttoLotteryMax4 = lastplan.NumberList
-					} else {
-						process.PuttoLotteryMax4 = lastplan.NumberList
-
-					}
-
-					lastplan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
-
 					lotterPlans = append(lotterPlans, lastplan)
-					logs.Info("未中奖,计算下注数据为 %v ", lastplan)
+					putdata := process.CalculatePutByHis(data[0][1], nnss)
+					plan := model.LotterPlan{}
+					nextPeriodNum, _ := strconv.Atoi(data[0][0])
+					plan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
+					plan.NumberList = putdata
+					plan.GetReward = false
+					plan.PutTime = 1
+					plan.RealPutTime = 0
+					plan.Status = "等开"
+					plan.CreateTime = time.Now().Format("2006-01-02 15:04:05")
+					process.PuttoLotteryMax4 = putdata
+					lotterPlans = append(lotterPlans, plan)
+					logs.Info("没中奖，计算下注数据为 %v ", plan)
+
 					//存数据库
-					err := process.RestorePlan(lastplan)
+					err := process.RestorePlan(plan)
 					if err != nil {
-						logs.Error("RestorePlanToDB [%v] err: %v", lastplan, err)
+						logs.Error("RestorePlanToDB [%v] err: %v", plan, err)
 					}
 				}
 			}

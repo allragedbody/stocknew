@@ -106,29 +106,29 @@ func (this *LotteryController) GetDateData() {
 }
 
 func (this *LotteryController) ImportantMiss() {
-        this.AllowCross() //允许跨域
+	this.AllowCross() //允许跨域
 
-        this.Data["json"] = process.ImportantMiss
-        this.ServeJSON()
+	this.Data["json"] = process.ImportantMiss
+	this.ServeJSON()
 }
 
 func (this *LotteryController) ModeStatistic() {
-        this.AllowCross() //允许跨域
-        size, err := this.GetInt(":size")
-        if err != nil {
-                this.Ctx.WriteString(err.Error())
-                return
-        }
+	this.AllowCross() //允许跨域
+	size, err := this.GetInt(":size")
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
+	}
 
-        err = process.NextNumberStatistics(size)
-        if err != nil {
-         this.Ctx.WriteString(err.Error())
-                return
+	err = process.NextNumberStatistics(size)
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
 
-         }
- 
-        this.Data["json"] = process.ModeStatistic
-        this.ServeJSON()
+	}
+
+	this.Data["json"] = process.ModeStatistic
+	this.ServeJSON()
 }
 
 type BaseController struct {
