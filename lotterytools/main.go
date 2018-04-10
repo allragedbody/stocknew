@@ -325,6 +325,12 @@ func caculateDataMax4() {
 			continue
 		}
 
+		err = process.NextNumberStatistics(10000)
+		if err != nil {
+			logs.Error("统计历史下一个数字失败", err)
+			continue
+		}
+
 		alldata, err := process.CalculateMiss(data)
 		if err != nil {
 			logs.Error("获取彩票数据库数据失败。", err)
@@ -360,7 +366,7 @@ func caculateDataMax4() {
 			process.RestoreImportantMiss(tmpdata)
 			sendtime = 0
 		}
-		
+
 		process.MissDataLottery = missdata
 		logs.Info("计算遗漏数据为 %v", process.MissDataLottery)
 		//存数据库
@@ -438,7 +444,6 @@ func caculateDataMax4() {
 						lastplan.RealPutTime = lastplan.PutTime - 2
 					}
 
-
 					lastplan.Status = "倍投"
 					nextPeriodNum, _ := strconv.Atoi(data[0][0])
 					lastplan.CurrentPierod = strconv.Itoa(nextPeriodNum + 1)
@@ -501,7 +506,6 @@ func getNewPlan(a, b []int) []int {
 	}
 	return l
 }
-
 
 func fiveTenAndOneNine(list []int) bool {
 	n := 0
