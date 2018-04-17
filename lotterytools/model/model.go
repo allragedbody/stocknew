@@ -50,8 +50,8 @@ type TokenResp struct {
 	ExpiresIn   int    `json:"expires_in"`
 }
 type TenMiss struct {
-	Period  string
-	TenSize int
+	Period  string  `json:"period"`
+	TenSize int      `json:"tenSize"`
 }
 
 //func (*PKTen) ChangeInfos(fierstPeriods int, numbers []int, pkt *PKTen) *PKTen {
