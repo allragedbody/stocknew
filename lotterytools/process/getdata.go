@@ -536,7 +536,7 @@ func sortMapByValue(m map[string]int) PairList {
 	i := 0
 	for k, v := range m {
 		p[i] = Pair{k, v}
-                i++
+		i++
 	}
 	sort.Sort(p)
 	return p
@@ -544,8 +544,8 @@ func sortMapByValue(m map[string]int) PairList {
 
 func CalculatePutByHis(cur string, his map[string]map[string]int) []int {
 	v := his[cur]
-	delete(v,"odd")
-	delete(v,"even")
+	delete(v, "odd")
+	delete(v, "even")
 	p := sortMapByValue(v)
 
 	selectNums := make([]int, 0)
@@ -567,6 +567,28 @@ func GetDateData() {
 	}
 	DateData = dd
 	logs.Debug("历史数据是 %v", DateData)
+}
+
+func GetTenMissCount(size int) ([]model.TenMiss, error) {
+	tenMiss := make([]model.TenMiss, 0)
+	dbconn := db.GetDB()
+	msdatas, err := dbconn.GetMissData(0, size)
+	if err != nil {
+		return tenMiss, err
+	}
+	var count int
+	for _, mds := range msdatas {
+		for i := 1; i <= 10; i++ {
+			s, _ := strconv.Atoi(mds[i])
+			if s >= 10 {
+				count = count + 1
+			}
+		}
+		tm := model.TenMiss{mds[0], count}
+		tenMiss = append(tenMiss, tm)
+		count = 0
+	}
+	return tenMiss, nil
 }
 
 func RestoreLotterResult(lps []model.LotterPlan) {

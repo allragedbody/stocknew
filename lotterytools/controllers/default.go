@@ -131,6 +131,27 @@ func (this *LotteryController) ModeStatistic() {
 	this.ServeJSON()
 }
 
+func (this *LotteryController) TenMissCount() {
+	this.AllowCross() //允许跨域
+
+	size, err := this.GetInt(":size")
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
+	}
+
+	data, err := process.GetTenMissCount(size)
+	if err != nil {
+		this.Ctx.WriteString(err.Error())
+		return
+	}
+
+	this.Data["json"] = data
+
+	this.ServeJSON()
+	//	this.Ctx.WriteString(info)
+}
+
 type BaseController struct {
 	beego.Controller
 }

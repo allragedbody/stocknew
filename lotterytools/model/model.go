@@ -49,6 +49,10 @@ type TokenResp struct {
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int    `json:"expires_in"`
 }
+type TenMiss struct {
+	Period  string
+	TenSize int
+}
 
 //func (*PKTen) ChangeInfos(fierstPeriods int, numbers []int, pkt *PKTen) *PKTen {
 //	pkt.Periods = pkt.Periods + 1
