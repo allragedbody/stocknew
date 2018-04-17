@@ -249,6 +249,7 @@ $.ajax({
          }
         });
 
+
 $.ajax({
       url: "http://54.250.253.42:8888/newplan",
       async: false,
@@ -256,16 +257,35 @@ $.ajax({
       dataType: "JSON",
       success:function(result){
              newplanhtml1 += " <span style=\"font-size: 1px;\" class=\"tz_blueball\"></span>";
-                 $.each(result, function(index, data){
-                  newplanhtml1 += "<div style=\"font-size: 10px ;\"></div>";
-                  newplanhtml1 += " <br>"
-                  newplanhtml1 += " <span style=\"font-size: 12px;\" class=\"tz_blueball\">("+data+")</span>"
-          });
-                  newplanhtml1 += " <br>"
+                 $.each(result.reverse(), function(index, data){
+                  newplanhtml1 += "<div style=\"font-size: 10px ;\"><br></div>";
+                  newplanhtml1 += " <span style=\"font-size: 15px;\" class=\"tz_blueball\"> "+data.currentPierod+"-["+data.numberList+"]</span>"+" <span style=\"font-size: 15px;\" class=\"tz_blueball\"> -("+data.putTime+")</span>"
 
-          document.getElementById("newgetplans1").innerHTML = (newplanhtml1);
-         }
+                 if (index==0){
+                     realtime = data.realPutTime
+                 }
+
+                  if (data.status=="等开"){
+                          newplanhtml1 += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-D</span>"
+                  }
+                  if (data.status=="中"){
+                          newplanhtml1 += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-Z</span>"
+                  }
+                  if (data.status=="不中"){
+                          newplanhtml1 += " <span style=\"font-size: 15px;\" class=\"tz_blueball\">-B</span>"
+                  }
+
+                 newplanhtml1 += " <span style=\"font-size: 15px;\" class=\"tz_blueball\"> -["+data.createTime+"]</span>" ;
+
+          });
+          newplanhtml1 += "<div style=\"font-size: 10px ;\"><p></p></div>";
+
+                  document.getElementById("newgetplans1").innerHTML = (newplanhtml1);
+
+      }
         });
+
+
 
 	</script>
     </body>

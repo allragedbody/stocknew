@@ -536,6 +536,7 @@ func sortMapByValue(m map[string]int) PairList {
 	i := 0
 	for k, v := range m {
 		p[i] = Pair{k, v}
+                i++
 	}
 	sort.Sort(p)
 	return p
@@ -543,11 +544,12 @@ func sortMapByValue(m map[string]int) PairList {
 
 func CalculatePutByHis(cur string, his map[string]map[string]int) []int {
 	v := his[cur]
+	delete(v,"odd")
+	delete(v,"even")
 	p := sortMapByValue(v)
 
 	selectNums := make([]int, 0)
-
-	for i := 0; i < 5; i++ {
+	for i := 9; i > 4; i-- {
 		n, _ := strconv.Atoi(p[i].Key)
 		selectNums = append(selectNums, n)
 	}

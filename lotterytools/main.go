@@ -374,7 +374,7 @@ func caculateDataMax4() {
 			logs.Error("RestoreMissData [%v-%v] err: %v", data[0][0], missdata, err)
 		}
 
-		nnss, err := process.NextNumberStatisticsSelf(1000)
+		nnss, err := process.NextNumberStatisticsSelf(360)
 		if err != nil {
 			logs.Error("NextNumberStatisticsSelf err: %v", err)
 			continue
