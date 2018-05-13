@@ -8,7 +8,7 @@ import (
 	"strconv"
 	//	"github.com/axgle/mahonia"
 	//	"bytes"
-	//	"errors"
+		"errors"
 	"fmt"
 	//	"io/ioutil"
 	//	"net/http"
@@ -265,6 +265,89 @@ func NextNumberStatisticsSelf(size int) (map[string]map[string]int, error) {
 	}
 	return ns.numbers, nil
 }
+
+
+
+
+func NextNumberStatisticsBySizeAndDelsize(size int,delsize int) (map[string]map[string]int, error) {
+        ns := &numberStatistics{}
+        ns.numbers = make(map[string]map[string]int, 0)
+		if size<delsize{
+	        return ns.numbers, errors.New("size<delsize.")
+		}
+
+        for i := 1; i < 11; i++ {
+                ns.numbers[strconv.Itoa(i)] = make(map[string]int, 0)
+                for j := 1; j < 11; j++ {
+                        ns.numbers[strconv.Itoa(i)][strconv.Itoa(j)] = 0
+                }
+        }
+        dbconn := db.GetDB()
+        datas, err := dbconn.GetLotterData(0, size)
+        if err != nil {
+                return ns.numbers, err
+        }
+
+        data1 := make([][]string, 0)
+		
+		if len(datas)<delsize{
+	        return ns.numbers, errors.New("size<delsize.")
+		}
+		
+		datas1:=datas[delsize:]
+		
+        lendata := len(datas1)
+
+        for i := lendata - 1; i >= 0; i-- {
+                data1 = append(data1, datas1[i])
+        }
+
+        for index, data := range data1 {
+                if index == 0 {
+                        ns.cur = data[1]
+						                } else {
+                        if nextHitMode(data[1], "number", "1") {
+                                ns.numbers[ns.cur]["1"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "2") {
+                                ns.numbers[ns.cur]["2"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "3") {
+                                ns.numbers[ns.cur]["3"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "4") {
+                                ns.numbers[ns.cur]["4"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "5") {
+                                ns.numbers[ns.cur]["5"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "6") {
+                                ns.numbers[ns.cur]["6"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "7") {
+                                ns.numbers[ns.cur]["7"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "8") {
+                                ns.numbers[ns.cur]["8"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "9") {
+                                ns.numbers[ns.cur]["9"] += 1
+                        }
+                        if nextHitMode(data[1], "number", "10") {
+                                ns.numbers[ns.cur]["10"] += 1
+                        }
+                        if nextHitMode(data[1], "oddeven", "odd") {
+                                ns.numbers[ns.cur]["odd"] += 1
+                        }
+                        if nextHitMode(data[1], "oddeven", "Even") {
+                                ns.numbers[ns.cur]["even"] += 1
+                        }
+                        ns.cur = data[1]
+                }
+        }
+        return ns.numbers, nil
+}
+
 
 func nextHitMode(number string, mode string, rule string) bool {
 	if mode == "number" {
