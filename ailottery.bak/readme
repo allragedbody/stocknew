@@ -1,0 +1,47 @@
+http://api.caipiaokong.cn/lottery/?name=bjpks&format=json&uid=963680&token=db5b10550d6bf7271ec6a105a391816f51e60ccf
+
+数据库建表
+CREATE TABLE `PK10` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `period` varchar(10) NOT NULL DEFAULT '',
+  `number1` varchar(2) NOT NULL,
+  `number2` varchar(2) NOT NULL,
+  `number3` varchar(2) NOT NULL,
+  `number4` varchar(2) NOT NULL,
+  `number5` varchar(2) NOT NULL,
+  `number6` varchar(2) NOT NULL,
+  `number7` varchar(2) NOT NULL,
+  `number8` varchar(2) NOT NULL,
+  `number9` varchar(2) NOT NULL,
+  `number10` varchar(2) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_period` (`period`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=254 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `historypush` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `currentPierod` varchar(20) DEFAULT NULL,
+  `numberList` varchar(100) DEFAULT NULL,
+  `putTime` int(10) DEFAULT NULL,
+  `realPutTime` int(10) DEFAULT NULL,
+  `status` varchar(20) DEFAULT NULL,
+  `getReward` int(10) DEFAULT NULL,
+  `createTime` varchar(50) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+sc create lottery binpath= D:\project\src\stocknew\lottery/lottery.exe type= own start= auto displayname= lottery
+services.msc
+
+https://ap-northeast-1.console.aws.amazon.com/console/home?region=ap-northeast-1
+allragedbody
+@Dyf19830404@
+
+root
+@Dyf19830404@
+
+pkpk
+@Dyf19840218@
+
+grant all privileges on pkpk.* to 'pkpk'@'127.0.0.1' identified by 'Dyf19840218@' with grant option;
+flush privileges;

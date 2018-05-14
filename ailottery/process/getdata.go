@@ -52,14 +52,15 @@ func (knn *KNN) GetData(size int) [][]int {
 	stidata := strToInt(rdata)
 
 	for i, _ := range stidata {
-                if i< len(stidata)-size+10{
-		tmpdata := stidata[i : i+size+1]
-                logs.Debug(i,tmpdata)
-		if isTraningData(tmpdata, size) {
-			td := getTraningData(tmpdata)
-			knndata = append(knndata, td)
+		//此处有一个bug
+		if i < len(stidata)-size {
+			tmpdata := stidata[i : i+size+1]
+			logs.Debug(i, tmpdata)
+			if isTraningData(tmpdata, size) {
+				td := getTraningData(tmpdata)
+				knndata = append(knndata, td)
+			}
 		}
-}
 	}
 
 	return knndata

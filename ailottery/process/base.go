@@ -12,9 +12,11 @@ import (
 	//	"io/ioutil"
 	//	"net/http"
 	//	"sort"
+	"bufio"
 	"os"
 	"time"
 	//	"encoding/json"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 )
 
@@ -44,9 +46,9 @@ func (oridata *OriData) HandleData(traninglist [][]int) error {
 	return nil
 }
 
-func (oridata *OriData) StoreData(traninglist [][]int) error {
+func (oridata *OriData) StoreData(traninglist [][]int, size int) error {
 	logs.Debug("KNN存储数据 %v ", traninglist)
-	f, err := os.Create(AIDIR + "/knnlist.tmp") //创建文件
+	f, err := os.Create(AIDIR + "/knnlist" + strconv.Itoa(size) + ".tmp") //创建文件
 	if err != nil {
 		return err
 	}
@@ -75,14 +77,16 @@ func (oridata *OriData) StoreData(traninglist [][]int) error {
 		}
 
 	}
+	w := bufio.NewWriter(f)
+	_, err = w.WriteString(str)
 
-	_, err = f.WriteString(str) //写入文件(字节数组)
 	if err != nil {
 		return err
 	}
-	f.Sync()
+	w.Flush()
+	f.Close()
 
-	err = os.Rename(AIDIR+"/knnlist.tmp", AIDIR+"/knnlist.txt")
+	err = os.Rename(AIDIR+"/knnlist"+strconv.Itoa(size)+".tmp", AIDIR+"/knnlist"+strconv.Itoa(size)+".txt")
 	if err != nil {
 		return err
 	}
@@ -92,25 +96,25 @@ func (oridata *OriData) StoreData(traninglist [][]int) error {
 
 func (oridata *OriData) CalculateData(size int) error {
 	dbconn := db.GetDB()
-	data, err := dbconn.GetLotterData(0, 21)
+	data, err := dbconn.GetLotterData(0, size+1)
 	rdata := reverse(data)
 
 	param := ""
 	for _, v := range rdata {
-		logs.Debug("第 %v 期中奖数据为 %v", v[0], v[1])
+		logs.Debug("第 %v 期数据为 %v", v[0], v[1])
 		param += " " + v[1]
 	}
 
 	next, _ := strconv.Atoi(rdata[len(rdata)-1][0])
 
-	//推测中奖号码为：
-	calculateNumbers, err := oridata.KNNCalculate(param)
+	//推测号码为：
+	calculateNumbers, err := oridata.KNNCalculate(param, size)
 	if err != nil {
-		logs.Error("第 %v 期中奖数据推测计算错误 %v", next+1, err)
+		logs.Error("%v 数据推测计算错误 %v", next+1, err)
 		return err
 	}
 
-	logs.Debug("第 %v 期中奖数据推测为 %v", next+1, calculateNumbers)
+	logs.Debug("%v 数据推测为 %v", next+1, calculateNumbers)
 	return nil
 }
 
@@ -122,16 +126,44 @@ func Init() {
 func Running() {
 	for {
 		time.Sleep(time.Second * 2)
-		logs.Info("获取彩票数据库数据。")
-		oridata := OD.GetData(20)
-		OD.HandleData(oridata)
-		err := OD.StoreData(oridata)
+		recordSize, _ := beego.AppConfig.Int("knnsize20")
+		logs.Info("进行对k临近算法的运算。")
+
+		err := DataPrepare(recordSize)
 		if err != nil {
+			logs.Error("数据未准备好，重试。")
 			continue
 		}
-		OD.CalculateData(20)
+
+		go DataReload(recordSize)
+
+		OD.CalculateData(recordSize)
 
 	}
+}
+
+func DataPrepare(recordSize int) error {
+	oridata := OD.GetData(recordSize)
+	OD.HandleData(oridata)
+	err := OD.StoreData(oridata, recordSize)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DataReload(recordSize int) {
+	for {
+		time.Sleep(time.Second * 120)
+		oridata := OD.GetData(recordSize)
+		OD.HandleData(oridata)
+		err := OD.StoreData(oridata, recordSize)
+		if err != nil {
+			logs.Error("数据未准备好，重试。")
+			continue
+		}
+	}
+
 }
 
 type GetData interface {
