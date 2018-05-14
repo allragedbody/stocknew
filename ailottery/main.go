@@ -18,8 +18,8 @@ import (
 
 func initLog() error {
 	jsonConfig := `{
-	        "filename" : "d:/AILottery.log",
-			"level":7
+	        "filename" : "./AILottery.log",
+			"level":6
 	    }`
 
 	logs.SetLogger("file", jsonConfig)

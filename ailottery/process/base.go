@@ -92,7 +92,7 @@ func (oridata *OriData) StoreData(traninglist [][]int) error {
 
 func (oridata *OriData) CalculateData(size int) error {
 	dbconn := db.GetDB()
-	data, err := dbconn.GetLotterData(0, 20)
+	data, err := dbconn.GetLotterData(0, 21)
 	rdata := reverse(data)
 
 	param := ""

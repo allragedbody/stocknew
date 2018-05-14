@@ -1,5 +1,5 @@
-# -*- coding: utf-8 -*-
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
 from numpy import *
 import numpy as np
 import operator
@@ -75,7 +75,7 @@ def autoNorm(dataSet):
 def classifyPerson():
     resultList=[1,2]
     #将文件读入到矩阵当中
-    datingDataMat,datingLabels=file2matrix('aidir/knnlist.txt')
+    datingDataMat,datingLabels=file2matrix('./knnlist.txt')
     #将矩阵归一化
     normMat,ranges,minVals=autoNorm(datingDataMat)
     inArrList=[]
