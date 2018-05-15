@@ -44,7 +44,7 @@ def file2matrix(filename):
     fr=open(filename)
     arrayOLines=fr.readlines()
     numberOfLines=len(arrayOLines)
-    returnMat=zeros((numberOfLines,70))
+    returnMat=zeros((numberOfLines,13))
     #print("returnMat %s",returnMat)
     classLabelVector=[]
     index=0
@@ -53,7 +53,7 @@ def file2matrix(filename):
         #切分每一行数据得到一个列表形式的数据
         listFromLine=line.split(',')
         #为二维数组的每一份儿数据赋值，每行三个数据组成数组，文件有多长，这样的数组就有多少个。
-        returnMat[index,:]=listFromLine[0:70]
+        returnMat[index,:]=listFromLine[0:13]
         #将数组中最后一个分类数据存储在列表中，最后一项数据代表分类。根据喜欢程度分成三个层次。
         classLabelVector.append(int(listFromLine[-1]))
         index+=1
@@ -97,11 +97,11 @@ def classifyPerson():
 
 
 def datingClassTest():
-    hoRatio=0.15
+    hoRatio=0.1
     #将文件读入到矩阵当中
     datingDataMat,datingLabels=file2matrix('./knnlist.txt')
     #将矩阵归一化
-    normMat,ranges,minVals=autoNorm(datingDataMat)
+    normMat,ranges,minVals=autoNorm1(datingDataMat)
     #拿到矩阵的第一层的个数 1000
     m=normMat.shape[0]
     #print("m =",m)

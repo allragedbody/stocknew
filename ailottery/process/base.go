@@ -41,6 +41,19 @@ func (oridata *OriData) GetData(size int) [][]int {
 	return knnlist
 }
 
+func (oridata *OriData) GetMissData(size int) [][]int {
+	logs.Debug("oridata GetMissData")
+	T := &KNN{}
+	T.K = 3
+	T.TrainingSet.KT = &model.KNNTrainingSet{}
+	T.TrainingSet.KT.Size = size
+
+	knnlist := T.GetMissData(size)
+
+	logs.Debug("KNN获取数据 %v ", knnlist)
+	return knnlist
+}
+
 func (oridata *OriData) HandleData(traninglist [][]int) error {
 	logs.Debug("KNN处理数据 %v ", traninglist)
 	return nil
@@ -87,6 +100,54 @@ func (oridata *OriData) StoreData(traninglist [][]int, size int) error {
 	f.Close()
 
 	err = os.Rename(AIDIR+"/knnlist"+strconv.Itoa(size)+".tmp", AIDIR+"/knnlist"+strconv.Itoa(size)+".txt")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (oridata *OriData) StoreMissData(traninglist [][]int, size int) error {
+	logs.Debug("KNN存储数据 %v ", traninglist)
+	f, err := os.Create(AIDIR + "/missknnlist" + strconv.Itoa(size) + ".tmp") //创建文件
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	str := ""
+
+	for i, v := range traninglist {
+		if i == len(traninglist)-1 {
+			for ii, vv := range v {
+				if ii == len(v)-1 {
+					str += strconv.Itoa(vv)
+				} else {
+					str += strconv.Itoa(vv) + ","
+				}
+			}
+		} else {
+			for ii, vv := range v {
+				if ii == len(v)-1 {
+					str += strconv.Itoa(vv)
+				} else {
+					str += strconv.Itoa(vv) + ","
+				}
+			}
+			str += "\n"
+		}
+
+	}
+	w := bufio.NewWriter(f)
+	_, err = w.WriteString(str)
+
+	if err != nil {
+		return err
+	}
+	w.Flush()
+	f.Close()
+
+	err = os.Rename(AIDIR+"/missknnlist"+strconv.Itoa(size)+".tmp", AIDIR+"/missknnlist"+strconv.Itoa(size)+".txt")
 	if err != nil {
 		return err
 	}
@@ -149,6 +210,14 @@ func DataPrepare(recordSize int) error {
 	if err != nil {
 		return err
 	}
+
+	orimissdata := OD.GetMissData(recordSize)
+	OD.HandleData(orimissdata)
+	err = OD.StoreMissData(orimissdata, recordSize)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -162,8 +231,14 @@ func DataReload(recordSize int) {
 			logs.Error("数据未准备好，重试。")
 			continue
 		}
+		orimissdata := OD.GetMissData(recordSize)
+		OD.HandleData(orimissdata)
+		err = OD.StoreMissData(orimissdata, recordSize)
+		if err != nil {
+			logs.Error("数据未准备好，重试。")
+			continue
+		}
 	}
-
 }
 
 type GetData interface {

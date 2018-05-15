@@ -47,3 +47,4 @@ func main() {
 	beego.SetStaticPath("/views", "views")
 	beego.Run()
 }
+
