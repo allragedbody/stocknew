@@ -41,7 +41,7 @@ func main() {
 	}
 	process.Init()
 	logs.Info("开始运行。")
-	process.Running()
+	go process.Running()
 
 	routers.Init()
 	beego.SetStaticPath("/views", "views")

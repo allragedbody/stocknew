@@ -77,6 +77,7 @@ func (knn *KNN) GetMissData(size int) [][]int {
 	}
 
 	rdata := reverse(data)
+
 	stidata := strToInt(rdata)
 
 	for i, _ := range stidata {
@@ -99,8 +100,9 @@ func (knn *KNN) GetMissData(size int) [][]int {
 func reverse(data [][]string) [][]string {
 	d := make([][]string, 0)
 	lenth := len(data)
-	for i := lenth - 1; i > 0; i-- {
+	for i := lenth - 1; i >= 0; {
 		d = append(d, data[i])
+		i--
 	}
 	return d
 }
