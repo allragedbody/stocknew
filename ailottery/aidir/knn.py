@@ -84,7 +84,7 @@ def autoNorm1(dataSet):
 def classifyPerson():
     resultList=[1,2]
     #将文件读入到矩阵当中
-    datingDataMat,datingLabels=file2matrix('./knnlist.txt')
+    datingDataMat,datingLabels=file2matrix('./missknnlist7.txt')
     #将矩阵归一化
     normMat,ranges,minVals=autoNorm(datingDataMat)
     inArrList=[]
@@ -99,7 +99,7 @@ def classifyPerson():
 def datingClassTest():
     hoRatio=0.15
     #将文件读入到矩阵当中
-    datingDataMat,datingLabels=file2matrix('./knnlist.txt')
+    datingDataMat,datingLabels=file2matrix('./missknnlist7.txt')
     #将矩阵归一化
     normMat,ranges,minVals=autoNorm(datingDataMat)
     #拿到矩阵的第一层的个数 1000

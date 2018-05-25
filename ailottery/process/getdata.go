@@ -11,9 +11,11 @@ import (
 	//	"fmt"
 	//	"io/ioutil"
 	//	"net/http"
-	//	"sort"
+	"sort"
 	//	"encoding/json"
+	"strings"
 
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 )
 
@@ -184,8 +186,8 @@ func getTraningMissData(data [][]int) ([]int, bool) {
 				tmpv = v
 			}
 		} else {
-			if getMissType(tmpv, v) != 0 {
-				traningSet = append(traningSet, getMissType(tmpv, v))
+			if getMissType(tmpv[1:], v[1:]) != 0 {
+				traningSet = append(traningSet, getMissType(tmpv[1:], v[1:]))
 			} else {
 				return traningSet, false
 			}
@@ -207,38 +209,78 @@ func getType(num int) int {
 }
 
 func getMissType(tmpv []int, numlist []int) int {
-	index := 0
+	boundary, _ := beego.AppConfig.Int("boundary")
+	findindex := 0
 	for i, v := range numlist {
 		if v == 0 {
-			index = i
-		}
-	}
-	ltten := 0
-	gtten := 0
-
-	for _, tv := range tmpv {
-		if tv < 10 {
-			ltten += 1
-		} else {
-			gtten += 1
+			findindex = i
 		}
 	}
 
-	if tmpv[index] < 10 {
-		if ltten <= gtten {
-			return 1
-		} else {
-			return 0
+	gttenums := 0
+
+	mtmpvs := make(map[int]int)
+
+	for i, tmiss := range tmpv {
+		mtmpvs[tmiss] = i
+	}
+
+	var keys []int
+	for k := range mtmpvs {
+		keys = append(keys, k)
+	}
+
+	sort.Ints(keys)
+
+	//获取分界线信息
+	for _, k := range keys {
+		logs.Debug("Key:", k, "Value:", mtmpvs[k])
+		if k >= boundary {
+			gttenums += 1
 		}
+	}
+
+	missupbondary, _ := beego.AppConfig.Int("missupbondary")
+
+	upbondarystr := beego.AppConfig.String("upbondary")
+	underbondarystr := beego.AppConfig.String("underbondary")
+	upbondary := stringsToList(upbondarystr)
+	underbondary := stringsToList(underbondarystr)
+	logs.Debug("upbondary %v", upbondary)
+	logs.Debug("underbondary %v", underbondary)
+	//当大于9的miss值大于等于5个的时候,从小数里面出就是少数，为2状态
+	if gttenums >= missupbondary {
+		for _, i := range upbondary {
+			logs.Debug("對比情況 %v", i)
+			if findindex == mtmpvs[keys[i]] {
+				return 2
+			} else {
+				return 1
+			}
+		}
+
 	} else {
-		if gtten <= ltten {
-			return 2
-		} else {
-			return 0
+		//当大于9的miss值小于5个的时候，如果从小数里面出就是多数，为1状态。
+		for _, i := range underbondary {
+			logs.Debug("對比情況 %v", i)
+			if findindex == mtmpvs[keys[i]] {
+				return 1
+			} else {
+				return 2
+			}
 		}
 	}
 
 	return 0
 
+}
+
+func stringsToList(str string) []int {
+	list := make([]int, 0)
+	for _, s := range strings.Split(str, " ") {
+		ii, _ := strconv.Atoi(s)
+		list = append(list, ii)
+	}
+	return list
 }
 

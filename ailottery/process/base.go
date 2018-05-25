@@ -12,11 +12,10 @@ import (
 	//	"io/ioutil"
 	//	"net/http"
 	//	"sort"
-	"bufio"
 	"os"
 	"time"
 	//	"encoding/json"
-	"github.com/astaxie/beego"
+	//	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
 )
 
@@ -60,53 +59,52 @@ func (oridata *OriData) HandleData(traninglist [][]int) error {
 	return nil
 }
 
-func (oridata *OriData) StoreData(traninglist [][]int, size int) error {
-	logs.Debug("KNN存储数据 %v ", traninglist)
-	f, err := os.Create(AIDIR + "/knnlist" + strconv.Itoa(size) + ".tmp") //创建文件
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+//func (oridata *OriData) StoreData(traninglist [][]int, size int) error {
+//	logs.Debug("KNN存储数据 %v ", traninglist)
+//	f, err := os.Create(AIDIR + "/knnlist" + strconv.Itoa(size) + ".tmp") //创建文件
+//	if err != nil {
+//		return err
+//	}
 
-	str := ""
+//	str := ""
 
-	for i, v := range traninglist {
-		if i == len(traninglist)-1 {
-			for ii, vv := range v {
-				if ii == len(v)-1 {
-					str += strconv.Itoa(vv)
-				} else {
-					str += strconv.Itoa(vv) + ","
-				}
-			}
-		} else {
-			for ii, vv := range v {
-				if ii == len(v)-1 {
-					str += strconv.Itoa(vv)
-				} else {
-					str += strconv.Itoa(vv) + ","
-				}
-			}
-			str += "\n"
-		}
+//	for i, v := range traninglist {
+//		if i == len(traninglist)-1 {
+//			for ii, vv := range v {
+//				if ii == len(v)-1 {
+//					str += strconv.Itoa(vv)
+//				} else {
+//					str += strconv.Itoa(vv) + ","
+//				}
+//			}
+//		} else {
+//			for ii, vv := range v {
+//				if ii == len(v)-1 {
+//					str += strconv.Itoa(vv)
+//				} else {
+//					str += strconv.Itoa(vv) + ","
+//				}
+//			}
+//			str += "\n"
+//		}
 
-	}
-	w := bufio.NewWriter(f)
-	_, err = w.WriteString(str)
+//	}
+//	w := bufio.NewWriter(f)
+//	_, err = w.WriteString(str)
 
-	if err != nil {
-		return err
-	}
-	w.Flush()
-	f.Close()
+//	if err != nil {
+//		return err
+//	}
+//	w.Flush()
+//	f.Close()
 
-	err = os.Rename(AIDIR+"/knnlist"+strconv.Itoa(size)+".tmp", AIDIR+"/knnlist"+strconv.Itoa(size)+".txt")
-	if err != nil {
-		return err
-	}
+//	err = os.Rename(AIDIR+"/knnlist"+strconv.Itoa(size)+".tmp", AIDIR+"/knnlist"+strconv.Itoa(size)+".txt")
+//	if err != nil {
+//		return err
+//	}
 
-	return nil
-}
+//	return nil
+//}
 
 func (oridata *OriData) StoreMissData(traninglist [][]int, size int) error {
 	logs.Debug("KNN存储数据 %v ", traninglist)
@@ -114,7 +112,6 @@ func (oridata *OriData) StoreMissData(traninglist [][]int, size int) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
 
 	str := ""
 
@@ -138,16 +135,15 @@ func (oridata *OriData) StoreMissData(traninglist [][]int, size int) error {
 			str += "\n"
 		}
 
+		_, err = f.WriteString(str)
+		if err != nil {
+			return err
+		}
+		str = ""
 	}
-	w := bufio.NewWriter(f)
-	_, err = w.WriteString(str)
 
-	if err != nil {
-		return err
-	}
-	w.Flush()
+	f.Sync()
 	f.Close()
-
 	err = os.Rename(AIDIR+"/missknnlist"+strconv.Itoa(size)+".tmp", AIDIR+"/missknnlist"+strconv.Itoa(size)+".txt")
 	if err != nil {
 		return err
@@ -234,30 +230,25 @@ func Init() {
 	lotterPlans = make([]model.LotterPlan, 0)
 }
 
-func Running() {
-	recordSize, _ := beego.AppConfig.Int("knnsize20")
-	err := DataPrepare(recordSize)
-	if err != nil {
-		logs.Error("数据未准备好，重试。")
-		return
-	}
-	go DataReload(recordSize)
+func Running(size int) {
 	for {
 		time.Sleep(time.Second * 10)
 		logs.Info("进行对k临近算法的运算。")
-		OD.CalculateMissData(recordSize)
+		OD.CalculateMissData(size)
 		CaculateDataByAI()
 	}
 }
 
 func DataPrepare(recordSize int) error {
+	logs.Info("开始运行获取miss数据。")
 	orimissdata := OD.GetMissData(recordSize)
 	OD.HandleData(orimissdata)
+	logs.Info("开始运行写入。")
 	err := OD.StoreMissData(orimissdata, recordSize)
 	if err != nil {
 		return err
 	}
-
+	logs.Info("开始运行写入完毕。")
 	return nil
 }
 
